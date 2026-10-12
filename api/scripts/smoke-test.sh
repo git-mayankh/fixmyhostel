@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-API_URL="${API_URL:-http://localhost:5000}"
+API_URL="${API_URL:-http://localhost:5001}"
 FRONTEND_URL="${FRONTEND_URL:-http://localhost:3000}"
 EXPECTED_VERSION="${EXPECTED_VERSION:-1.0.0}"
 

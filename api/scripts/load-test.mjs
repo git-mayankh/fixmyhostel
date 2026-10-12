@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const BASE_URL = process.env.API_URL || 'http://localhost:5000';
+const BASE_URL = process.env.API_URL || 'http://localhost:5001';
 
 const categories = ['plumbing', 'electrical', 'internet', 'furniture', 'cleanliness', 'other'];
 const severities = ['low', 'medium', 'high', 'critical'];
