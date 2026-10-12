@@ -178,7 +178,7 @@ async function seed() {
       for (const item of sampleComplaints) {
         const res = await query(
           `INSERT INTO complaints 
-           (token_number, student_id, title, description, category, severity, location, status, assigned_to, resolution_notes, created_at, accepted_at, started_at, resolved_at) 
+           (token_number, student_id, title, description, category, severity, location, status, assigned_to, resolution_notes, raised_at, accepted_at, started_at, resolved_at) 
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW() - INTERVAL FLOOR(RAND() * 5) DAY, 
                    IF(? = 'RAISED', NULL, NOW() - INTERVAL 2 HOUR), 
                    IF(? IN ('IN_PROGRESS', 'RESOLVED'), NOW() - INTERVAL 1 HOUR, NULL), 
@@ -203,7 +203,7 @@ async function seed() {
         if (item.status === 'RESOLVED') {
           // Add sample feedback
           await query(
-            'INSERT INTO feedback (complaint_id, student_id, rating, comments) VALUES (?, ?, ?, ?)',
+            'INSERT INTO feedback (complaint_id, student_id, rating, comment) VALUES (?, ?, ?, ?)',
             [res.insertId, studentId, 5, 'Quick resolution! Works perfectly now.']
           );
         }
