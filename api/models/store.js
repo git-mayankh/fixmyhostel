@@ -374,17 +374,21 @@ class InMemoryStore {
 class SqlStore {
   async findUserByEmail(email) {
     const rows = await query('SELECT * FROM users WHERE LOWER(email) = LOWER(?)', [email]);
-    return rows && rows.length > 0 ? rows[0] : null;
+    if (!rows || rows.length === 0) return null;
+    const u = rows[0];
+    return { ...u, password: u.password_hash || u.password };
   }
 
   async findUserById(id) {
     const rows = await query('SELECT * FROM users WHERE id = ?', [id]);
-    return rows && rows.length > 0 ? rows[0] : null;
+    if (!rows || rows.length === 0) return null;
+    const u = rows[0];
+    return { ...u, password: u.password_hash || u.password };
   }
 
   async createUser({ name, email, password, role = 'student', room_number = null }) {
     const res = await query(
-      'INSERT INTO users (name, email, password, role, room_number) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO users (name, email, password_hash, role, room_number) VALUES (?, ?, ?, ?, ?)',
       [name, email.toLowerCase(), password, role, room_number]
     );
     return {
@@ -408,7 +412,7 @@ class SqlStore {
   async getNextTokenNumberForToday() {
     const todayStr = getISTDateString(new Date());
     const rows = await query(
-      'SELECT COUNT(*) as count FROM complaints WHERE DATE(CONVERT_TZ(created_at, "+00:00", "+05:30")) = ?',
+      'SELECT COUNT(*) as count FROM complaints WHERE DATE(CONVERT_TZ(raised_at, "+00:00", "+05:30")) = ?',
       [todayStr]
     );
     const count = rows && rows[0] ? parseInt(rows[0].count, 10) : 0;
@@ -434,7 +438,7 @@ class SqlStore {
       sql += ' AND status = ?';
       params.push(status);
     }
-    sql += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+    sql += ' ORDER BY raised_at DESC LIMIT ? OFFSET ?';
     const offset = (page - 1) * limit;
     params.push(parseInt(limit, 10), parseInt(offset, 10));
 
@@ -507,7 +511,7 @@ class SqlStore {
           WHEN 'low' THEN 4
           ELSE 5
         END ASC,
-        c.created_at ASC
+        c.raised_at ASC
     `;
     return await query(sql);
   }
@@ -552,7 +556,7 @@ class SqlStore {
       FROM complaints c
       LEFT JOIN users u ON c.student_id = u.id
       WHERE c.assigned_to = ?
-      ORDER BY c.created_at DESC
+      ORDER BY c.raised_at DESC
     `;
     return await query(sql, [staffId]);
   }
@@ -569,7 +573,7 @@ class SqlStore {
     }
 
     const res = await query(
-      'INSERT INTO feedback (complaint_id, student_id, rating, comments) VALUES (?, ?, ?, ?)',
+      'INSERT INTO feedback (complaint_id, student_id, rating, comment) VALUES (?, ?, ?, ?)',
       [complaint_id, student_id, parsedRating, comments || '']
     );
     return {
@@ -577,7 +581,7 @@ class SqlStore {
       complaint_id: parseInt(complaint_id, 10),
       student_id: parseInt(student_id, 10),
       rating: parsedRating,
-      comments: comments || ''
+      comment: comments || ''
     };
   }
 
@@ -589,7 +593,7 @@ class SqlStore {
     const todayStr = getISTDateString(new Date());
 
     const totalTodayRes = await query(
-      'SELECT COUNT(*) as count FROM complaints WHERE DATE(CONVERT_TZ(created_at, "+00:00", "+05:30")) = ?',
+      'SELECT COUNT(*) as count FROM complaints WHERE DATE(CONVERT_TZ(raised_at, "+00:00", "+05:30")) = ?',
       [todayStr]
     );
     const total_complaints = totalTodayRes[0] ? parseInt(totalTodayRes[0].count, 10) : 0;
@@ -600,7 +604,7 @@ class SqlStore {
     const pending_count = pendingRes[0] ? parseInt(pendingRes[0].count, 10) : 0;
 
     const resolvedTodayRes = await query(
-      'SELECT COUNT(*) as count, AVG(TIMESTAMPDIFF(MINUTE, created_at, resolved_at)) as avg_min FROM complaints WHERE status = "RESOLVED" AND DATE(CONVERT_TZ(resolved_at, "+00:00", "+05:30")) = ?',
+      'SELECT COUNT(*) as count, AVG(TIMESTAMPDIFF(MINUTE, raised_at, resolved_at)) as avg_min FROM complaints WHERE status = "RESOLVED" AND DATE(CONVERT_TZ(resolved_at, "+00:00", "+05:30")) = ?',
       [todayStr]
     );
     const resolved_count = resolvedTodayRes[0] ? parseInt(resolvedTodayRes[0].count, 10) : 0;
@@ -611,7 +615,7 @@ class SqlStore {
     const topLocRows = await query('SELECT location, COUNT(*) as count FROM complaints GROUP BY location ORDER BY count DESC LIMIT 5');
 
     const hourlyMap = Array.from({ length: 24 }, (_, i) => ({ hour: i, count: 0 }));
-    const hourlyRows = await query('SELECT HOUR(created_at) as hour, COUNT(*) as count FROM complaints GROUP BY HOUR(created_at)');
+    const hourlyRows = await query('SELECT HOUR(raised_at) as hour, COUNT(*) as count FROM complaints GROUP BY HOUR(raised_at)');
     hourlyRows.forEach(r => {
       const h = parseInt(r.hour, 10);
       if (hourlyMap[h]) hourlyMap[h].count = parseInt(r.count, 10);
@@ -621,7 +625,7 @@ class SqlStore {
     for (let i = 6; i >= 0; i--) {
       const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
       const dStr = getISTDateString(d);
-      const raisedRes = await query('SELECT COUNT(*) as count FROM complaints WHERE DATE(CONVERT_TZ(created_at, "+00:00", "+05:30")) = ?', [dStr]);
+      const raisedRes = await query('SELECT COUNT(*) as count FROM complaints WHERE DATE(CONVERT_TZ(raised_at, "+00:00", "+05:30")) = ?', [dStr]);
       const resolvedRes = await query('SELECT COUNT(*) as count FROM complaints WHERE status = "RESOLVED" AND DATE(CONVERT_TZ(resolved_at, "+00:00", "+05:30")) = ?', [dStr]);
       daily_trend.push({
         date: dStr,
@@ -650,7 +654,7 @@ class SqlStore {
         u.name,
         COUNT(c.id) as assigned,
         SUM(CASE WHEN c.status = 'RESOLVED' THEN 1 ELSE 0 END) as resolved,
-        COALESCE(AVG(CASE WHEN c.status = 'RESOLVED' THEN TIMESTAMPDIFF(MINUTE, c.created_at, c.resolved_at) ELSE NULL END), 0) as avg_resolution_time
+        COALESCE(AVG(CASE WHEN c.status = 'RESOLVED' THEN TIMESTAMPDIFF(MINUTE, c.raised_at, c.resolved_at) ELSE NULL END), 0) as avg_resolution_time
       FROM users u
       LEFT JOIN complaints c ON u.id = c.assigned_to
       WHERE u.role = 'staff'
