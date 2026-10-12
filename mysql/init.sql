@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS feedback (
 
 -- Seed default warden, student, and staff accounts
 INSERT INTO users (name, email, password_hash, role) VALUES
-('Mayank Heda', 'mayank@fixmyhostel.com', '$2a$10$8KxGBDGH5GJnJVL2lR7z5OtQN6oFQ/0x4RfKSJZLFpGDHn7Jbq8Ky', 'warden'),
-('Ishita Gurbaxani', 'ishita@fixmyhostel.com', '$2a$10$8KxGBDGH5GJnJVL2lR7z5OtQN6oFQ/0x4RfKSJZLFpGDHn7Jbq8Ky', 'student'),
-('Bhavisha Kewalramani', 'bhavisha@fixmyhostel.com', '$2a$10$8KxGBDGH5GJnJVL2lR7z5OtQN6oFQ/0x4RfKSJZLFpGDHn7Jbq8Ky', 'staff');
--- Note: The hash above is for 'password123' generated with bcrypt (10 rounds)
+('Mayank Heda', 'mayank@fixmyhostel.com', '$2a$10$x9uM.bWVz7gwNrNtLyOh/Oh4Yq4ZKUVheHUwVQDnZ8wqAACHymc/q', 'warden'),
+('Ishita Gurbaxani', 'ishita@fixmyhostel.com', '$2a$10$x9uM.bWVz7gwNrNtLyOh/Oh4Yq4ZKUVheHUwVQDnZ8wqAACHymc/q', 'student'),
+('Bhavisha Kewalramani', 'bhavisha@fixmyhostel.com', '$2a$10$x9uM.bWVz7gwNrNtLyOh/Oh4Yq4ZKUVheHUwVQDnZ8wqAACHymc/q', 'staff');
+-- Verified bcrypt hash (10 salt rounds) for password: password123
