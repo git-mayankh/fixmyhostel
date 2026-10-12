@@ -5,8 +5,8 @@ const { requireRole } = require('../middleware/role');
 function createStaffRoutes(store) {
   const router = express.Router();
 
-  // All staff routes require auth and 'staff' role (or staff and warden if needed, but 'staff' specifically)
-  router.use(auth, requireRole('staff'));
+  // All staff routes require auth and 'staff' or 'warden' role
+  router.use(auth, requireRole('staff', 'warden'));
 
   // GET /queue — get all non-resolved complaints sorted by severity then oldest first
   router.get('/queue', async (req, res, next) => {

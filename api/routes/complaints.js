@@ -93,7 +93,7 @@ function createComplaintsRoutes(store) {
   });
 
   // GET / — student gets own complaints
-  router.get('/', auth, requireRole('student'), async (req, res, next) => {
+  const handleGetMyComplaints = async (req, res, next) => {
     try {
       const { status, page = 1, limit = 10 } = req.query;
       const parsedPage = Math.max(1, parseInt(page, 10) || 1);
@@ -115,7 +115,10 @@ function createComplaintsRoutes(store) {
     } catch (err) {
       next(err);
     }
-  });
+  };
+
+  router.get('/', auth, requireRole('student'), handleGetMyComplaints);
+  router.get('/my', auth, requireRole('student'), handleGetMyComplaints);
 
   // GET /:id — get single complaint
   router.get('/:id', auth, async (req, res, next) => {
@@ -164,6 +167,36 @@ function createComplaintsRoutes(store) {
         complaint: result,
         ...result
       });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // PATCH /:id/status — update complaint status (used by Staff and Warden)
+  router.patch('/:id/status', auth, requireRole('staff', 'warden'), async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { status, resolutionNotes, resolution_notes } = req.body;
+      const notes = resolutionNotes || resolution_notes;
+
+      let result;
+      if (status === 'ACCEPTED') {
+        result = await store.acceptComplaint(id, req.user.id);
+      } else if (status === 'IN_PROGRESS') {
+        result = await store.startComplaint(id, req.user.id);
+      } else if (status === 'RESOLVED') {
+        result = await store.resolveComplaint(id, req.user.id, notes);
+      } else {
+        return res.status(400).json({ error: 'Invalid status value' });
+      }
+
+      if (result && result.error) {
+        if (result.error === 'NOT_FOUND') return res.status(404).json({ error: 'Complaint not found' });
+        if (result.error === 'INVALID_STATUS') return res.status(400).json({ error: 'Illegal status transition' });
+        if (result.error === 'MISSING_NOTES') return res.status(400).json({ error: 'Resolution notes are required' });
+      }
+
+      return res.json({ message: 'Status updated successfully', complaint: result, ...result });
     } catch (err) {
       next(err);
     }

@@ -11,8 +11,84 @@ function createAdminRoutes(store) {
   // GET /dashboard
   router.get('/dashboard', async (req, res, next) => {
     try {
-      const stats = await store.getAdminDashboardStats();
-      return res.json(stats);
+      const data = await store.getAdminDashboardStats();
+
+      // Transform category counts to object
+      const categoryCounts = {
+        Plumbing: 0,
+        Electrical: 0,
+        Internet: 0,
+        Furniture: 0,
+        Cleanliness: 0,
+        Other: 0
+      };
+      if (Array.isArray(data.complaints_by_category)) {
+        data.complaints_by_category.forEach(item => {
+          const cat = item.category ? item.category.charAt(0).toUpperCase() + item.category.slice(1).toLowerCase() : 'Other';
+          categoryCounts[cat] = (categoryCounts[cat] || 0) + (parseInt(item.count, 10) || 0);
+        });
+      }
+
+      // Transform severity counts to object
+      const severityCounts = {
+        critical: 0,
+        high: 0,
+        medium: 0,
+        low: 0
+      };
+      if (Array.isArray(data.complaints_by_severity)) {
+        data.complaints_by_severity.forEach(item => {
+          if (item.severity && severityCounts[item.severity] !== undefined) {
+            severityCounts[item.severity] = parseInt(item.count, 10) || 0;
+          }
+        });
+      }
+
+      // Transform daily trend
+      const dailyTrend = {
+        labels: [],
+        values: []
+      };
+      if (Array.isArray(data.daily_trend)) {
+        data.daily_trend.forEach(item => {
+          dailyTrend.labels.push(item.date);
+          dailyTrend.values.push(parseInt(item.raised, 10) || 0);
+        });
+      }
+
+      // Transform hourly distribution
+      const hourlyDistribution = {
+        labels: [],
+        values: []
+      };
+      if (Array.isArray(data.hourly_distribution)) {
+        data.hourly_distribution.forEach(item => {
+          hourlyDistribution.labels.push(`${item.hour}:00`);
+          hourlyDistribution.values.push(parseInt(item.count, 10) || 0);
+        });
+      }
+
+      const topLocations = Array.isArray(data.top_locations)
+        ? data.top_locations.map(item => ({
+            location: item.location || 'Unknown',
+            count: parseInt(item.count, 10) || 0
+          }))
+        : [];
+
+      return res.json({
+        ...data,
+        stats: {
+          totalToday: data.total_complaints || 0,
+          pending: data.pending_count || 0,
+          resolved: data.resolved_count || 0,
+          avgResolutionTimeHours: Number(((data.avg_resolution_minutes || 0) / 60).toFixed(1))
+        },
+        categoryCounts,
+        severityCounts,
+        dailyTrend,
+        hourlyDistribution,
+        topLocations
+      });
     } catch (err) {
       next(err);
     }
