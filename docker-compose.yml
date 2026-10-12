@@ -1,0 +1,148 @@
+version: '3.8'
+services:
+  frontend:
+    build: ./frontend
+    container_name: fmh-frontend
+    ports:
+      - '3000:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:80/']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - fmh-network
+
+  api:
+    build: ./api
+    container_name: fmh-api
+    ports:
+      - '5000:5000'
+    environment:
+      - PORT=5000
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=fixmyhostel
+      - DB_PASSWORD=hostel123
+      - DB_NAME=fixmyhosteldb
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=fixmyhostel-secret-key-2026
+      - NODE_ENV=production
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - uploads:/app/uploads
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:5000/api/ops/health']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fmh-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: fmh-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: fixmyhosteldb
+      MYSQL_USER: fixmyhostel
+      MYSQL_PASSWORD: hostel123
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-proot123']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - fmh-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: fmh-redis
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - fmh-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: fmh-prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml
+      - prometheus-data:/prometheus
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - fmh-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: fmh-grafana
+    ports:
+      - '3001:3000'
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/fixmyhostel.json
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - fmh-network
+
+  nagios:
+    image: jasonrivers/nagios:latest
+    container_name: fmh-nagios
+    ports:
+      - '8080:80'
+    environment:
+      - NAGIOSADMIN_USER=nagiosadmin
+      - NAGIOSADMIN_PASSWORD=nagios123
+    volumes:
+      - ./monitoring/nagios/conf.d:/opt/nagios/etc/conf.d
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - fmh-network
+
+volumes:
+  mysql-data:
+  uploads:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  fmh-network:
+    driver: bridge
