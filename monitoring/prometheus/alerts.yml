@@ -1,0 +1,38 @@
+groups:
+  - name: fixmyhostel_alerts
+    rules:
+      - alert: ApiDown
+        expr: up{job="fixmyhostel-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "FixMyHostel API service is down"
+          description: "API instance {{ $labels.instance }} has been unreachable for more than 1 minute."
+
+      - alert: HighErrorRate
+        expr: (sum(rate(http_requests_total{status_code=~"5.."}[5m])) / sum(rate(http_requests_total[5m]))) * 100 > 5
+        for: 5m
+        labels:
+          severity: high
+        annotations:
+          summary: "High HTTP 5xx error rate detected"
+          description: "HTTP 5xx error rate is currently at {{ $value }}% (threshold: >5%) over the last 5 minutes."
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High latency detected on FixMyHostel API"
+          description: "95th percentile response latency is {{ $value }} seconds (>500ms) for more than 5 minutes."
+
+      - alert: HighComplaintVolume
+        expr: increase(complaints_total[1h]) > 50
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Abnormal surge in complaints"
+          description: "More than 50 complaints were raised within the last 1 hour (current value: {{ $value }})."
