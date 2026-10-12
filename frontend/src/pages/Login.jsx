@@ -89,7 +89,7 @@ export default function Login() {
         </div>
 
         <div className="text-xs text-indigo-300">
-          Developed for FixMyHostel Capstone &copy; {new Date().getFullYear()}
+          FixMyHostel &bull; Mayank Heda, Ishita Gurbaxani, Bhavisha Kewalramani
         </div>
       </div>
 
@@ -128,7 +128,7 @@ export default function Login() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. ishita@hostel.edu"
+                  placeholder="e.g. mayank@fixmyhostel.com"
                   required
                   className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 text-sm outline-none transition-all placeholder:text-slate-400"
                 />
@@ -177,7 +177,49 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="pt-4 border-t border-slate-100 text-center">
+          {/* Quick Demo Access Buttons */}
+          <div className="pt-3 border-t border-slate-100">
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2.5 text-center">
+              Quick Demo Access
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('mayank@fixmyhostel.com');
+                  setPassword('password123');
+                }}
+                className="p-2.5 rounded-xl border border-indigo-200 bg-indigo-50/70 text-indigo-700 font-semibold hover:bg-indigo-100 transition-colors text-center cursor-pointer shadow-sm"
+              >
+                Mayank Heda
+                <span className="block text-[10px] text-indigo-500 font-normal">Warden</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('ishita@fixmyhostel.com');
+                  setPassword('password123');
+                }}
+                className="p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-medium hover:bg-slate-100 transition-colors text-center cursor-pointer shadow-sm"
+              >
+                Ishita G.
+                <span className="block text-[10px] text-slate-500 font-normal">Student</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('bhavisha@fixmyhostel.com');
+                  setPassword('password123');
+                }}
+                className="p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-medium hover:bg-slate-100 transition-colors text-center cursor-pointer shadow-sm"
+              >
+                Bhavisha K.
+                <span className="block text-[10px] text-slate-500 font-normal">Staff</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-2 text-center">
             <p className="text-sm text-slate-600">
               Don't have an account yet?{' '}
               <Link
