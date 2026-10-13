@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FixMyHostel — Complete Concept, Architecture &amp; Viva Guide</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --primary-light: #e0e7ff;
+      --accent: #0284c7;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --code-bg: #090d16;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 80px;
+    }
+
+    /* Sticky Header */
+    header {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand span {
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Hero Banner */
+    .hero {
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(2, 132, 199, 0.1));
+      border: 1px solid rgba(79, 70, 229, 0.3);
+      border-radius: 16px;
+      padding: 36px 32px;
+      margin-bottom: 40px;
+    }
+
+    .hero h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(to right, #818cf8, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #cbd5e1;
+      font-size: 1.05rem;
+      max-width: 900px;
+      margin-bottom: 20px;
+    }
+
+    .team-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .team-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 8px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+
+    .team-pill strong {
+      color: #fff;
+    }
+
+    .team-pill span {
+      color: var(--text-muted);
+    }
+
+    .badge-role {
+      font-size: 0.72rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .role-mayank { background: rgba(79, 70, 229, 0.25); color: #a5b4fc; }
+    .role-ishita { background: rgba(16, 185, 129, 0.25); color: #6ee7b7; }
+    .role-bhavisha { background: rgba(245, 158, 11, 0.25); color: #fcd34d; }
+
+    /* Section Styling */
+    section {
+      margin-bottom: 56px;
+      scroll-margin-top: 90px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .section-number {
+      background: var(--primary);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Cards & Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: #6366f1;
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+
+    .tool-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .icon-git { background: #f05032; color: #fff; }
+    .icon-docker { background: #2496ed; color: #fff; }
+    .icon-compose { background: #1572b6; color: #fff; }
+    .icon-jenkins { background: #d33833; color: #fff; }
+    .icon-jira { background: #0052cc; color: #fff; }
+    .icon-prom { background: #e6522c; color: #fff; }
+    .icon-grafana { background: #f46800; color: #fff; }
+    .icon-nagios { background: #006600; color: #fff; }
+    .icon-redis { background: #dc382d; color: #fff; }
+    .icon-mysql { background: #4479a1; color: #fff; }
+
+    .card p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      margin-bottom: 14px;
+    }
+
+    .sub-heading {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-top: 14px;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    ul.feature-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul.feature-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      color: #cbd5e1;
+    }
+
+    ul.feature-list li::before {
+      content: "•";
+      color: #818cf8;
+      font-weight: bold;
+      font-size: 1.2rem;
+      position: absolute;
+      left: 4px;
+      top: -2px;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 16px 0 24px 0;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #111827;
+      color: #e2e8f0;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+      color: #cbd5e1;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-port {
+      background: rgba(2, 132, 199, 0.2);
+      color: #38bdf8;
+      font-family: monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .badge-cred {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      font-family: monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    /* Terminal blocks */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      color: #38bdf8;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      color: #fca5a5;
+    }
+
+    /* Callouts */
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: rgba(79, 70, 229, 0.08);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 0.95rem;
+    }
+
+    .callout-success {
+      border-left-color: var(--success);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .callout-warning {
+      border-left-color: var(--warning);
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    /* Viva Script Cards */
+    .script-box {
+      background: #1e293b;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .speaker-tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .speaker-mayank { background: #4f46e5; color: #fff; }
+    .speaker-ishita { background: #059669; color: #fff; }
+    .speaker-bhavisha { background: #d97706; color: #fff; }
+
+    .script-dialogue {
+      font-size: 1rem;
+      color: #f1f5f9;
+      margin-bottom: 14px;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+      border-left: 3px solid #818cf8;
+      font-style: italic;
+    }
+
+    .action-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* Q&A Accordion Style */
+    .qa-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 14px;
+    }
+
+    .qa-q {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #f8fafc;
+      margin-bottom: 8px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .qa-q::before {
+      content: "Q:";
+      color: var(--primary);
+    }
+
+    .qa-a {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      padding-left: 20px;
+      border-left: 2px solid var(--card-border);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Bar -->
+  <header>
+    <div class="brand">
+      <h1>FixMyHostel</h1>
+      <span>DevOps &amp; Viva Master Guide</span>
+    </div>
+    <nav>
+      <a href="#overview">Overview</a>
+      <a href="#tools-scratch">Tools From Scratch</a>
+      <a href="#fixmyhostel-engine">How System Works</a>
+      <a href="#credentials">Ports &amp; Passwords</a>
+      <a href="#presentation-roadmap">3-Person Viva Script</a>
+      <a href="#viva-questions">Expected Q&amp;A</a>
+    </nav>
+  </header>
+
+  <div class="container">
+
+    <!-- HERO SECTION -->
+    <div class="hero">
+      <h2>Complete Technical Understanding &amp; Viva Presentation Blueprint</h2>
+      <p>
+        A comprehensive guide explaining all foundational DevOps tools from absolute scratch, how they interconnect in the 
+        <strong>FixMyHostel</strong> system, and an exact step-by-step presentation roadmap for <strong>Mayank, Ishita, and Bhavisha</strong> 
+        to present to the examiner with confidence.
+      </p>
+
+      <div class="team-badge-row">
+        <div class="team-pill">
+          <span class="badge-role role-mayank">Full-Stack &amp; DevOps Lead</span>
+          <strong>Mayank Heda</strong>
+          <span>(Roll No: 2410135)</span>
+        </div>
+        <div class="team-pill">
+          <span class="badge-role role-ishita">Frontend &amp; Agile Lead</span>
+          <strong>Ishita Gurbaxani</strong>
+          <span>(Roll No: 2401034)</span>
+        </div>
+        <div class="team-pill">
+          <span class="badge-role role-bhavisha">Backend &amp; Monitoring Lead</span>
+          <strong>Bhavisha Kewalramani</strong>
+          <span>(Roll No: 2401044)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: EXECUTIVE OVERVIEW -->
+    <section id="overview">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <div class="section-title">What Did We Build &amp; Why Does It Matter?</div>
+      </div>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <h3>The Real-World Problem We Solved</h3>
+        <p>
+          In college and university hostels, infrastructure maintenance is broken. When a bathroom tap bursts, an electrical socket sparks, 
+          or the WiFi router in Wing B goes down, students typically write their complaints in a physical register at the security desk 
+          or post in unstructured WhatsApp groups.
+        </p>
+        <p>
+          <strong>The consequences:</strong> Complaints get lost, identical issues get raised multiple times by roommates, electricians and plumbers 
+          have no prioritized work order, and the Hostel Warden has zero visibility into how long repairs actually take.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>FixMyHostel (The Product)</h3>
+          <ul class="feature-list">
+            <li><strong>Student Portal:</strong> Residents submit geo-tagged complaints with photos, receive an atomic daily token (resetting at midnight IST), track ticket progress in real-time, and rate service quality (1–5 stars).</li>
+            <li><strong>Staff Live Queue:</strong> Maintenance staff work an automated, priority-sorted queue: <code>Critical → High → Medium → Low</code>. Higher severity and older tickets bubble to the top automatically.</li>
+            <li><strong>Warden Executive Dashboard:</strong> Real-time Service Level Agreement (SLA) metrics, turnaround duration charts, appliance failure hotspots, and technician efficiency metrics.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>The DevOps Integration (The Curriculum)</h3>
+          <p>
+            Instead of building a toy app for each lab experiment, <strong>FixMyHostel ties all first 7 experiments of the ASD&amp;D syllabus into one production stack:</strong>
+          </p>
+          <ul class="feature-list">
+            <li><strong>Exp 1:</strong> Git Version Control (16 branches, 15 PRs, semantic tags)</li>
+            <li><strong>Exp 2:</strong> Docker Containerization (Multi-stage builds, non-root users)</li>
+            <li><strong>Exp 3:</strong> Docker Compose (7 orchestrated services, bridge network, named volumes)</li>
+            <li><strong>Exp 4:</strong> Jenkins CI Pipeline (Linting, parallel testing, JUnit reporting)</li>
+            <li><strong>Exp 5:</strong> Automated CD &amp; Rollback (Zero-downtime deployment, smoke tests)</li>
+            <li><strong>Exp 6:</strong> Jira Agile &amp; Scrum (Story points, 2 sprints, Definition of Done)</li>
+            <li><strong>Exp 7:</strong> Prometheus, Grafana &amp; Nagios (Timeseries &amp; active state monitoring)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: TOOLS FROM SCRATCH -->
+    <section id="tools-scratch">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <div class="section-title">The DevOps Toolchain: Core Concepts Explained From Scratch</div>
+      </div>
+
+      <div class="grid-2">
+        <!-- GIT -->
+        <div class="card">
+          <h3><span class="tool-icon icon-git">Git</span> Git &amp; GitHub (Version Control)</h3>
+          <div class="sub-heading">What is it in plain English?</div>
+          <p>
+            A <strong>Distributed Version Control System (DVCS)</strong> that records every historical change made to code. Think of it as an infinite "undo" button 
+            plus a parallel dimension machine where multiple developers can work on separate features without overwriting each other's work.
+          </p>
+          <div class="sub-heading">Key Concepts:</div>
+          <ul class="feature-list">
+            <li><strong>Branch:</strong> An isolated timeline of development (e.g. <code>feature/FMH-2-database-schema</code>).</li>
+            <li><strong>Commit:</strong> A permanent cryptographic snapshot of staged changes with an author and message.</li>
+            <li><strong>Pull Request (PR):</strong> A proposed merge from a feature branch into <code>main</code>, requiring code review and CI verification.</li>
+            <li><strong>Merge Commit:</strong> Combines branch histories into <code>main</code> while preserving individual commit lineage.</li>
+          </ul>
+          <div class="sub-heading">How we used it in FixMyHostel:</div>
+          <p>
+            We maintained 16 branches, 15 pull requests, and semantic version tags (<code>v1.0.0</code> to <code>v1.0.2</code>). Developers never pushed to <code>main</code> directly.
+          </p>
+        </div>
+
+        <!-- DOCKER -->
+        <div class="card">
+          <h3><span class="tool-icon icon-docker">🐳</span> Docker (Containerization)</h3>
+          <div class="sub-heading">What is it in plain English?</div>
+          <p>
+            A virtualization tool that packages an application along with its exact dependencies, libraries, Node.js version, and OS configuration into a single portable unit called a <strong>container</strong>. 
+            It permanently eliminates the classic excuse: <em>"It works on my machine, why not yours?"</em>
+          </p>
+          <div class="sub-heading">Key Concepts:</div>
+          <ul class="feature-list">
+            <li><strong>Image vs Container:</strong> An <em>image</em> is the blueprint (read-only); a <em>container</em> is the live running instance (writable layer).</li>
+            <li><strong>Multi-stage build:</strong> Compiling dependencies in a heavy build stage, but copying only minified artifacts to a lightweight production runtime (keeps images small and fast).</li>
+            <li><strong>Healthcheck:</strong> Docker regularly executes an internal check (e.g., <code>wget /api/ops/health</code>) to ensure the service is truly responding.</li>
+          </ul>
+          <div class="sub-heading">How we used it in FixMyHostel:</div>
+          <p>
+            Both <code>api</code> (Node 20 Alpine) and <code>frontend</code> (Nginx Alpine) have multi-stage Dockerfiles executing as unprivileged non-root users.
+          </p>
+        </div>
+
+        <!-- DOCKER COMPOSE -->
+        <div class="card">
+          <h3><span class="tool-icon icon-compose">🐙</span> Docker Compose (Multi-Container Orchestration)</h3>
+          <div class="sub-heading">What is it in plain English?</div>
+          <p>
+            When an application consists of multiple containers (frontend, API, database, cache, monitoring), running 7 individual <code>docker run</code> commands 
+            with complex port and network flags is error-prone. <strong>Docker Compose</strong> declares the entire multi-service stack in a single <code>docker-compose.yml</code> file.
+          </p>
+          <div class="sub-heading">Key Concepts:</div>
+          <ul class="feature-list">
+            <li><strong>Services:</strong> The containers that make up the app (frontend, api, mysql, redis, etc.).</li>
+            <li><strong>Bridge Network:</strong> An isolated virtual network (<code>fmh-network</code>) where containers talk to each other by name (e.g. <code>http://api:5000</code>).</li>
+            <li><strong>Named Volumes:</strong> Persistent storage that survives container deletions (e.g. <code>mysql-data</code>).</li>
+            <li><strong>Health-gated startup:</strong> Using <code>depends_on</code> with <code>condition: service_healthy</code> so the API never starts before MySQL accepts queries.</li>
+          </ul>
+        </div>
+
+        <!-- JENKINS -->
+        <div class="card">
+          <h3><span class="tool-icon icon-jenkins">⚙️</span> Jenkins (Continuous Integration &amp; Deployment)</h3>
+          <div class="sub-heading">What is it in plain English?</div>
+          <p>
+            An open-source automation server that acts as a tireless robot. Whenever code is committed, Jenkins automatically checks it out, installs dependencies, 
+            runs unit tests, lints the code, builds Docker images, and deploys the update to production.
+          </p>
+          <div class="sub-heading">Key Concepts:</div>
+          <ul class="feature-list">
+            <li><strong>CI (Continuous Integration):</strong> Automatically building and testing every commit so bugs are found within seconds.</li>
+            <li><strong>CD (Continuous Deployment):</strong> Automatically releasing verified code straight to the production server.</li>
+            <li><strong>Pipeline-as-Code:</strong> Declaring the entire build and test lifecycle inside a version-controlled <code>Jenkinsfile</code>.</li>
+            <li><strong>Automated Rollback:</strong> If a deployment smoke test fails on <code>main</code>, Jenkins automatically re-deploys the last known good version.</li>
+          </ul>
+        </div>
+
+        <!-- JIRA & SCRUM -->
+        <div class="card">
+          <h3><span class="tool-icon icon-jira">📋</span> Jira &amp; Agile Scrum (Project Management)</h3>
+          <div class="sub-heading">What is it in plain English?</div>
+          <p>
+            Instead of waterfall development (spending 6 months writing specifications before writing code), <strong>Agile Scrum</strong> breaks work into short 1- to 2-week iterations called <strong>Sprints</strong>. 
+            Jira is the industry-standard software board for tracking this lifecycle.
+          </p>
+          <div class="sub-heading">Key Concepts:</div>
+          <ul class="feature-list">
+            <li><strong>User Story:</strong> A feature written from the user's point of view: <em>"As a student, I want to upload a photo of the leak so the plumber brings the right tools."</em></li>
+            <li><strong>Story Points:</strong> Fibonacci numbers (1, 2, 3, 5, 8) representing relative effort and complexity.</li>
+            <li><strong>Scrum Board:</strong> Visual Kanban columns: <code>To Do → In Progress → In Review → Done</code>.</li>
+            <li><strong>Definition of Done (DoD):</strong> Criteria required before a card can be moved to Done (e.g., green Jenkins build + passing unit tests).</li>
+          </ul>
+        </div>
+
+        <!-- PROMETHEUS -->
+        <div class="card">
+          <h3><span class="tool-icon icon-prom">🔥</span> Prometheus (Time-Series Metric Scraping)</h3>
+          <div class="sub-heading">What is it in plain English?</div>
+          <p>
+            A <strong>pull-based time-series database</strong> designed for real-time monitoring. Every 15 seconds, Prometheus reaches out to our API endpoint (<code>/api/ops/metrics</code>), 
+            downloads numeric measurements (counters, gauges, latencies), and timestamps them.
+          </p>
+          <div class="sub-heading">Key Concepts:</div>
+          <ul class="feature-list">
+            <li><strong>Pull vs Push:</strong> Rather than the application sending millions of logs out, Prometheus <em>pulls</em> (scrapes) a structured metrics endpoint on a timer.</li>
+            <li><strong>Metric Types:</strong>
+              <br>• <em>Counter:</em> A number that only goes up (e.g. <code>complaints_total</code>, total HTTP requests).
+              <br>• <em>Gauge:</em> A number that goes up and down (e.g. active tickets in queue, memory usage).
+              <br>• <em>Histogram:</em> Tracks durations and bucket distributions (e.g. HTTP request latency in milliseconds).
+            </li>
+            <li><strong>PromQL:</strong> Prometheus Query Language used to calculate rates and 95th percentile latencies (e.g. <code>histogram_quantile(0.95, rate(...))</code>).</li>
+          </ul>
+        </div>
+
+        <!-- GRAFANA -->
+        <div class="card">
+          <h3><span class="tool-icon icon-grafana">📊</span> Grafana (Metrics Visualization Dashboards)</h3>
+          <div class="sub-heading">What is it in plain English?</div>
+          <p>
+            Prometheus stores raw numbers; <strong>Grafana turns those numbers into beautiful, interactive visual dashboards</strong>. 
+            It connects to Prometheus as a datasource and renders real-time line charts, gauge dials, bar charts, and status indicators.
+          </p>
+          <div class="sub-heading">Key Concepts:</div>
+          <ul class="feature-list">
+            <li><strong>Datasource:</strong> The backend where Grafana gets its data (pointing to <code>http://prometheus:9090</code>).</li>
+            <li><strong>Dashboard Provisioning:</strong> Instead of manually clicking buttons in the UI to draw charts, Grafana loads our pre-built <code>fixmyhostel.json</code> dashboard automatically on startup.</li>
+            <li><strong>Our 12 Panels:</strong> Displays Request Rate, Error Rate, p50/p95 Latency, Total Complaints, Active Queue, and Node.js Event Loop Lag.</li>
+          </ul>
+        </div>
+
+        <!-- NAGIOS -->
+        <div class="card">
+          <h3><span class="tool-icon icon-nagios">🛡️</span> Nagios Core (Active Availability &amp; Host Monitoring)</h3>
+          <div class="sub-heading">What is it in plain English?</div>
+          <p>
+            While Prometheus watches <em>trends over time</em>, <strong>Nagios asks: <em>"Is this specific server or port alive right this second?"</em></strong> 
+            Nagios actively sends TCP pings and HTTP requests to test if containers and host ports are UP or DOWN.
+          </p>
+          <div class="sub-heading">Key Concepts:</div>
+          <ul class="feature-list">
+            <li><strong>Plugin Architecture:</strong> Nagios uses small external executables (<code>check_http</code>, <code>check_tcp</code>, <code>check_ping</code>) that return an exit status: <code>0 = OK</code>, <code>1 = WARNING</code>, <code>2 = CRITICAL</code>.</li>
+            <li><strong>Soft vs Hard State:</strong> If a service check fails once, it enters a <em>Soft</em> state (retried 3 times). If it fails 3 consecutive times, it becomes a <em>Hard</em> state and alerts are triggered.</li>
+            <li><strong>NRPE (Nagios Remote Plugin Executor):</strong> An agent installed on remote hosts allowing Nagios to inspect disk usage, CPU load, and running processes across the network.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SUPPORTING TECH ROW -->
+      <div class="card">
+        <h3>Supporting Infrastructure Glue</h3>
+        <div class="grid-3" style="margin-top: 12px; margin-bottom: 0;">
+          <div>
+            <strong style="color: #38bdf8;">Nginx Alpine</strong>
+            <p style="font-size: 0.88rem;">Acts as a reverse proxy on Port 3000. It serves pre-compiled static React assets and transparently proxies all <code>/api/*</code> calls to the Express backend, completely preventing browser CORS errors.</p>
+          </div>
+          <div>
+            <strong style="color: #f87171;">Redis 7 Alpine</strong>
+            <p style="font-size: 0.88rem;">An ultra-fast in-memory key-value cache. It handles atomic sequence increments (<code>INCR token:2026-10-13</code>) for daily tokens and caches student ticket counts with a 60-second TTL.</p>
+          </div>
+          <div>
+            <strong style="color: #34d399;">MySQL 8.0 Relational Store</strong>
+            <p style="font-size: 0.88rem;">The ACID-compliant relational database. Stores users, complaints, and student feedback with foreign key cascading and multi-column indexes across <code>status</code> and <code>raised_at</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: HOW THE SYSTEM WORKS -->
+    <section id="fixmyhostel-engine">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <div class="section-title">Under the Hood: How FixMyHostel Works End-to-End</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>1. The Complaint Lifecycle &amp; State Machine</h3>
+          <p>
+            The system strictly enforces an automated state machine. Invalid state transitions (such as trying to mark a ticket <code>RESOLVED</code> without accepting it first) 
+            are blocked at the API level with an HTTP 400 Bad Request error:
+          </p>
+          <div style="background: rgba(0,0,0,0.3); padding: 14px; border-radius: 8px; font-family: monospace; font-size: 0.88rem; color: #cbd5e1; line-height: 1.8;">
+            <span style="color: #60a5fa; font-weight: bold;">[Student Files Ticket]</span><br>
+            &nbsp;&nbsp;↓<br>
+            <span style="color: #38bdf8; font-weight: bold;">RAISED</span> <em>(Token assigned, e.g. T-044)</em><br>
+            &nbsp;&nbsp;├── [Student cancels] → <span style="color: #94a3b8; font-weight: bold;">CANCELLED</span><br>
+            &nbsp;&nbsp;└── [Staff clicks Accept] → <span style="color: #c084fc; font-weight: bold;">ACCEPTED</span> <em>(Technician assigned)</em><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ [Staff starts repair]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #f59e0b; font-weight: bold;">IN_PROGRESS</span> <em>(Work underway)</em><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ [Staff enters resolution notes]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #34d399; font-weight: bold;">RESOLVED</span> <em>(Timestamped, ready for feedback)</em><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+            <span style="color: #fcd34d;">[Student Submits 1–5 Star Rating &amp; Review]</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>2. Dual-Store Architecture (Why our tests run in 500ms)</h3>
+          <p>
+            One of the architectural triumphs of this project is the <strong>Dual-Store Pattern</strong>.
+          </p>
+          <ul class="feature-list">
+            <li><strong>Production Mode (MySQL + Redis):</strong> In live Docker Compose mode, <code>api/server.js</code> initializes connections to the real MySQL database pool and Redis caching client.</li>
+            <li><strong>Testing Mode (In-Memory Map Store):</strong> When Jenkins or a developer runs <code>npm test</code>, Jest initializes Express using an in-memory Map store. It creates mock arrays for users and complaints in RAM.</li>
+            <li><strong>The Benefit:</strong> All 40 backend unit tests run in less than <strong>800 milliseconds</strong> without needing MySQL or Redis to be booted! This makes the Jenkins CI pipeline blazingly fast and deterministic.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3. The End-to-End DevOps Feedback Loop (The "Bug FMH-15" Story)</h3>
+        <div class="callout callout-warning">
+          <strong>Important viva story to tell the teacher:</strong> This proves you didn't just write code, but used DevOps practices to catch and fix a real bug!
+        </div>
+        <p>
+          After releasing version 1.0.8, our Nagios monitoring dashboard flagged the <code>fmh-frontend</code> container as <code>UNHEALTHY</code>, 
+          even though students could open the website in their browser.
+        </p>
+        <p>
+          <strong>Root Cause:</strong> Inside the minimal Alpine Linux container, the command <code>wget http://localhost:80/</code> resolved <code>localhost</code> to the IPv6 address <code>::1</code> first. However, Nginx was configured to listen only on IPv4 (<code>0.0.0.0:80</code>), causing the internal healthcheck to fail with a connection refused error.
+        </p>
+        <p>
+          <strong>DevOps Resolution:</strong>
+          <br>1. Logged bug as <strong>FMH-15</strong> in Jira.
+          <br>2. Created Git branch <code>fix/FMH-15-frontend-healthcheck</code>.
+          <br>3. Changed the health probe target from <code>localhost</code> to <code>127.0.0.1</code> explicitly.
+          <br>4. Jenkins CI automatically triggered, ran 46 tests, rebuilt the container, and verified the fix.
+          <br>5. Merged PR #15 to <code>main</code>, which automatically deployed release <code>v1.0.9</code>. Nagios immediately turned green!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 4: CREDENTIALS & SERVICE DIRECTORY -->
+    <section id="credentials">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <div class="section-title">Master Credentials &amp; Port Directory Cheat Sheet</div>
+      </div>
+
+      <div class="callout callout-success">
+        <strong>Examiner Reference:</strong> Keep these credentials handy on your screen when demonstrating to Ma'am!
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Service / Tool</th>
+              <th>Host URL / Port</th>
+              <th>Username / Email</th>
+              <th>Password</th>
+              <th>What to show on this screen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Frontend Web App</strong></td>
+              <td><span class="badge-port">http://localhost:3000</span></td>
+              <td><span class="badge-cred">mayank@fixmyhostel.com</span><br><span class="badge-cred">ishita@fixmyhostel.com</span><br><span class="badge-cred">bhavisha@fixmyhostel.com</span></td>
+              <td><span class="badge-cred">password123</span></td>
+              <td>1-click login buttons, student ticket filing, staff queue triage, warden dashboard</td>
+            </tr>
+            <tr>
+              <td><strong>Express Backend API</strong></td>
+              <td><span class="badge-port">http://localhost:5001</span></td>
+              <td>—</td>
+              <td>—</td>
+              <td><code>/api/ops/health</code> (JSON health check) and <code>/api/ops/metrics</code> (Prometheus text feed)</td>
+            </tr>
+            <tr>
+              <td><strong>Grafana Dashboards</strong></td>
+              <td><span class="badge-port">http://localhost:3001</span></td>
+              <td><span class="badge-cred">admin</span></td>
+              <td><span class="badge-cred">admin123</span></td>
+              <td>12-panel dashboard: Request rates, p95 latency, active ticket gauges, system memory</td>
+            </tr>
+            <tr>
+              <td><strong>Prometheus Server</strong></td>
+              <td><span class="badge-port">http://localhost:9090</span></td>
+              <td><em>None (public)</em></td>
+              <td><em>None</em></td>
+              <td><code>/targets</code> tab (shows <code>api:5000</code> is UP) and <code>/alerts</code> tab (configured alert rules)</td>
+            </tr>
+            <tr>
+              <td><strong>Nagios Core 4</strong></td>
+              <td><span class="badge-port">http://localhost:8080/nagios/</span></td>
+              <td><span class="badge-cred">nagiosadmin</span></td>
+              <td><span class="badge-cred">nagios123</span></td>
+              <td>Current Status &gt; Services (shows 7 service checks OK) &amp; Hosts matrix</td>
+            </tr>
+            <tr>
+              <td><strong>MySQL 8.0 Server</strong></td>
+              <td><span class="badge-port">localhost:3307</span></td>
+              <td><span class="badge-cred">fixmyhostel</span> (or root)</td>
+              <td><span class="badge-cred">hostel123</span> (root: root123)</td>
+              <td>Database: <code>fixmyhosteldb</code> (tables: <code>users</code>, <code>complaints</code>, <code>feedback</code>)</td>
+            </tr>
+            <tr>
+              <td><strong>Redis In-Memory Cache</strong></td>
+              <td><span class="badge-port">localhost:6379</span></td>
+              <td><em>Default</em></td>
+              <td><em>None</em></td>
+              <td>Holds keys like <code>token:YYYY-MM-DD</code> and cached ticket counts</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 5: PRESENTATION ROADMAP -->
+    <section id="presentation-roadmap">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <div class="section-title">The 3-Person Presentation Roadmap: How to Explain to Ma'am</div>
+      </div>
+
+      <div class="callout">
+        <strong>Strategy:</strong> Since all 3 of you are presenting from Mayank's PC, follow this exact choreographed sequence so every team member speaks for 3–4 minutes and demonstrates their core syllabus contribution!
+      </div>
+
+      <!-- INTRO SCRIPT -->
+      <div class="script-box">
+        <span class="speaker-tag speaker-mayank">Part 1: Mayank Heda</span>
+        <div class="action-badge">🎯 Time: 0:00 – 3:30 | Role: DevOps Lead &amp; Architecture Overview</div>
+        
+        <div class="script-dialogue">
+          "Good morning, Ma'am. Our project is <strong>FixMyHostel</strong>, an intelligent hostel complaint and maintenance system. 
+          Rather than building a simple CRUD app, our primary objective in this lab was to integrate <strong>all first 7 lab experiments</strong> 
+          into a single, unified DevOps delivery pipeline."
+        </div>
+
+        <p><strong>Step-by-Step Actions Mayank performs on the PC:</strong></p>
+        <ul class="feature-list">
+          <li><strong>Show Terminal:</strong> Run <code>docker compose ps</code> to show all 7 containers running and healthy.</li>
+          <li><strong>Explain the Architecture (Figure 3.1):</strong>
+            <br>• Point out the client tier (React 18 SPA) and Nginx reverse proxy on port 3000.
+            <br>• Show that the API runs in Node.js on port 5001, backed by MySQL 8.0 and Redis caching.
+            <br>• Explain the dedicated monitoring cluster: Prometheus scraping metrics, Grafana drawing graphs, and Nagios verifying availability.
+          </li>
+          <li><strong>Show Git &amp; Jenkins CI/CD (Exp 1, 4, 5):</strong>
+            <br>• Open terminal or Git log: <code>git log --oneline --graph -n 10</code> to show how we merged 15 feature pull requests.
+            <br>• Open <code>Jenkinsfile</code>: Explain the declarative pipeline stages (Checkout, Install, Lint, Test, Docker Build, Deploy on <code>main</code>, and Smoke Test).
+            <br>• Mention that if deployment fails, the pipeline automatically triggers an automated rollback to the last good version.
+          </li>
+          <li><strong>Show Warden Dashboard on UI:</strong> Log in as Warden (<code>mayank@fixmyhostel.com</code>). Show the live SLA turnaround metrics and appliance hotspot analytics.</li>
+          <li><strong>Hand-off cue:</strong> <em>"Now, Ishita will walk you through our Agile Scrum lifecycle and demonstrate the student experience."</em></li>
+        </ul>
+      </div>
+
+      <!-- ISHITA SCRIPT -->
+      <div class="script-box">
+        <span class="speaker-tag speaker-ishita">Part 2: Ishita Gurbaxani</span>
+        <div class="action-badge">🎯 Time: 3:30 – 7:00 | Role: Agile Lead &amp; Student Portal Workflow</div>
+
+        <div class="script-dialogue">
+          "Thank you, Mayank. Ma'am, for <strong>Experiment 6 (Agile Lifecycle using Jira)</strong>, we managed the entire project 
+          using Scrum across two distinct sprints with 15 user stories and tasks estimated using Fibonacci story points."
+        </div>
+
+        <p><strong>Step-by-Step Actions Ishita performs on the PC:</strong></p>
+        <ul class="feature-list">
+          <li><strong>Explain the Scrum Workflow:</strong>
+            <br>• <strong>Sprint 1 (18 points):</strong> Core student complaint submission, staff priority queue, Docker containerization.
+            <br>• <strong>Sprint 2 (11 points):</strong> Warden SLA analytics, student star ratings, Prometheus and Nagios monitoring.
+            <br>• <strong>Definition of Done:</strong> Explain that an issue was only moved to <code>Done</code> when the branch was merged via PR, the Jenkins build was green, and tests passed.
+          </li>
+          <li><strong>Live Student UI Demonstration (Exp 6 &amp; Frontend):</strong>
+            <br>• Click the 1-click login button for <strong>Ishita (Student)</strong>.
+            <br>• Click <strong>Raise Complaint</strong>: Select <code>Electrical</code> category, set severity to <code>Critical</code>, enter title <em>"Sparking switchboard in Room 304"</em>, and submit.
+            <br>• Show the <strong>Token Number generated</strong> (e.g. <code>T-045</code>). Explain that tokens reset daily at midnight Indian Standard Time.
+            <br>• Open <strong>Track Complaints</strong>: Show the real-time 4-step progress tracker (<code>RAISED → ACCEPTED → IN_PROGRESS → RESOLVED</code>).
+            <br>• Show that a student can only cancel a complaint while it is still in <code>RAISED</code> state.
+          </li>
+          <li><strong>Show Frontend Testing:</strong> Run <code>npm test</code> in the frontend folder to show Vitest verifying UI helpers and token formatting.</li>
+          <li><strong>Hand-off cue:</strong> <em>"Next, Bhavisha will explain our backend data architecture, caching, and our monitoring stack."</em></li>
+        </ul>
+      </div>
+
+      <!-- BHAVISHA SCRIPT -->
+      <div class="script-box">
+        <span class="speaker-tag speaker-bhavisha">Part 3: Bhavisha Kewalramani</span>
+        <div class="action-badge">🎯 Time: 7:00 – 10:30 | Role: Backend, Caching &amp; Observability Lead</div>
+
+        <div class="script-dialogue">
+          "Thank you, Ishita. Ma'am, I will now demonstrate how the backend processes maintenance requests, manages atomic caching, 
+          and how <strong>Experiment 7 (Monitoring with Prometheus, Grafana, and Nagios)</strong> provides full system observability."
+        </div>
+
+        <p><strong>Step-by-Step Actions Bhavisha performs on the PC:</strong></p>
+        <ul class="feature-list">
+          <li><strong>Live Staff Queue Demonstration:</strong>
+            <br>• Switch login to <strong>Bhavisha (Staff)</strong>.
+            <br>• Open <strong>Staff Queue</strong>: Point out that Ishita's new ticket appears right at the top because its severity is <code>Critical</code>!
+            <br>• Click <strong>Accept</strong>: Show state transition to <code>ACCEPTED</code>.
+            <br>• Click <strong>Start Work</strong>: Transitions to <code>IN_PROGRESS</code>.
+            <br>• Click <strong>Resolve</strong>: Enter mandatory resolution notes: <em>"Replaced faulty MCB switch and insulated wiring."</em> Mark Resolved.
+          </li>
+          <li><strong>Explain the Database &amp; Redis Cache:</strong>
+            <br>• Show the schema: <code>users</code>, <code>complaints</code>, and <code>feedback</code> with foreign keys.
+            <br>• Explain how Redis handles atomic increments (<code>INCR token:2026-10-13</code>) so concurrent requests never get duplicate tokens.
+          </li>
+          <li><strong>Show Prometheus (Port 9090):</strong>
+            <br>• Open <code>http://localhost:9090/targets</code>: Show that the <code>fixmyhostel-api</code> target is in the <code>UP</code> state.
+            <br>• Open <code>http://localhost:9090/alerts</code>: Show the pre-configured alert rules (High Error Rate, Slow Latency, API Down).
+          </li>
+          <li><strong>Show Grafana 12-Panel Dashboard (Port 3001):</strong>
+            <br>• Open <code>http://localhost:3001</code> (login: <code>admin / admin123</code>).
+            <br>• Open the <strong>FixMyHostel Live System Metrics</strong> dashboard.
+            <br>• Explain the panels: Live request rate, p95 latency curve, complaint counts by category, and active queue gauge.
+          </li>
+          <li><strong>Show Nagios Core 4 (Port 8080):</strong>
+            <br>• Open <code>http://localhost:8080/nagios/</code> (login: <code>nagiosadmin / nagios123</code>).
+            <br>• Click <strong>Current Status &gt; Services</strong>: Show all 7 services green and <code>OK</code>.
+            <br>• Explain the difference: <em>"Nagios monitors active state (is it UP or DOWN right now?), whereas Prometheus/Grafana monitors trends over time."</em>
+          </li>
+          <li><strong>Joint Closing:</strong> Mayank, Ishita, and Bhavisha thank Ma'am and invite questions.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 6: TOP 20 VIVA QUESTIONS & WINNING ANSWERS -->
+    <section id="viva-questions">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <div class="section-title">Anticipated Viva Questions &amp; Model Answers</div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-q">What is the difference between Prometheus and Nagios? Why do you need both?</div>
+        <div class="qa-a">
+          <strong>Prometheus</strong> follows a <em>time-series metric model</em> (pull-based). It records numeric metrics over time (e.g., request rates, p95 latencies, memory usage) so you can analyze trends and patterns. 
+          <strong>Nagios</strong> follows a <em>state-based availability model</em>. It runs active checks every few minutes to ask: <em>"Is this port or process alive right now?"</em> and triggers immediate alerts if a service transitions to a Hard CRITICAL state. 
+          We use Prometheus to understand performance trends and Nagios to ensure host and container uptime.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-q">Why did you use Docker Compose instead of plain Docker commands?</div>
+        <div class="qa-a">
+          FixMyHostel consists of 7 interdependent services (frontend, backend, database, cache, and 3 monitoring tools). Running individual <code>docker run</code> commands would require repeating complex port bindings, volume mounts, and network configurations manually. Docker Compose allows us to define the entire multi-container architecture declaratively in a single <code>docker-compose.yml</code> file, spin it up with a single command (<code>docker compose up -d</code>), and enforce health-gated startup dependencies (e.g. API waits for MySQL to be healthy).
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-q">How does your CI/CD pipeline prevent broken code from reaching production?</div>
+        <div class="qa-a">
+          Our Jenkins Declarative Pipeline executes automated gates:
+          <br>1. <strong>Linting:</strong> Verifies syntax and coding standards.
+          <br>2. <strong>Automated Tests:</strong> Runs 46 unit and integration tests (Jest + Vitest). If even a single test fails, the build halts immediately.
+          <br>3. <strong>Smoke Verification:</strong> On <code>main</code>, after deploying the new containers, a bash smoke script polls <code>/api/ops/health</code> to ensure the container is UP and running the exact new version.
+          <br>4. <strong>Rollback Block:</strong> If smoke testing fails, the pipeline's <code>post { failure }</code> block automatically redeploys the last recorded good version.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-q">What is a multi-stage Dockerfile and why did you use it?</div>
+        <div class="qa-a">
+          In a multi-stage build, the Dockerfile is divided into multiple <code>FROM</code> stages. In the first stage (Builder), we install build tools, compilers, and dependencies (like <code>npm ci</code> and <code>vite build</code>). In the final stage, we start from a clean, minimal Alpine image and copy only the compiled production artifacts (e.g., minified JS and CSS). This reduces our frontend container image size from over 350 MB down to just <strong>25 MB</strong>, minimizing attack surface and speeding up deployments.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-q">How does Redis prevent race conditions when two students file a complaint at the exact same millisecond?</div>
+        <div class="qa-a">
+          Redis is single-threaded and executes commands atomically in memory. When generating daily token numbers, we use the Redis command <code>INCR token:YYYY-MM-DD</code>. Because <code>INCR</code> is an atomic primitive, it guarantees that even if 50 students submit complaints concurrently in the same millisecond, each request receives a sequentially unique integer (T-001, T-002, etc.) with zero race conditions or database locks.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-q">What is PromQL? Can you give an example of a query used in your Grafana dashboard?</div>
+        <div class="qa-a">
+          PromQL stands for Prometheus Query Language. It is used to filter and aggregate time-series data. 
+          An example from our Grafana dashboard is calculating the 95th percentile API response latency:
+          <br><code>histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))</code>
+          <br>This calculates the maximum response time experienced by 95% of requests over a 5-minute rolling window.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-q">Why does your backend use the Dual-Store architecture?</div>
+        <div class="qa-a">
+          In production, the backend interacts with MySQL 8.0 and Redis. However, running MySQL and Redis during automated test runs introduces network latency, database setup/teardown overhead, and flaky tests. By designing an abstract store interface with both a <code>mysqlStore</code> and an in-memory <code>memoryStore</code>, our 40 backend Jest tests run purely in RAM in under <strong>800 milliseconds</strong> inside Jenkins without needing an external database.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-q">What are the columns on your Scrum board and what is your Definition of Done?</div>
+        <div class="qa-a">
+          Our Scrum board has 4 columns: <code>To Do</code>, <code>In Progress</code>, <code>In Review</code>, and <code>Done</code>. 
+          Our team's <strong>Definition of Done (DoD)</strong> requires that:
+          <br>1. Code was developed on an issue branch (e.g. <code>feature/FMH-2-database-schema</code>).
+          <br>2. A Pull Request was raised and reviewed.
+          <br>3. The Jenkins multibranch CI build passed all 46 automated tests with JUnit reporting.
+          <br>4. The feature was verified live in the running container environment.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: SUMMARY & CHEAT SHEET -->
+    <section>
+      <div class="card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)); border-color: #6366f1;">
+        <h3 style="color: #818cf8;">Quick CLI Commands to Run During Demo</h3>
+        <p>If Ma'am asks you to show the terminal or verify services live, run these commands:</p>
+        <pre># 1. View all running services and health status
+docker compose ps
+
+# 2. View real-time logs of the API
+docker compose logs -f api
+
+# 3. Execute all 40 backend unit tests
+cd api && npm test
+
+# 4. Run the morning rush load simulation (245 complaints in 4 mins)
+node api/scripts/load-test.mjs
+
+# 5. Check API health endpoint via curl
+curl -s http://localhost:5001/api/ops/health</pre>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>
+

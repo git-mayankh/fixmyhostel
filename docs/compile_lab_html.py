@@ -1,0 +1,867 @@
+import os
+import re
+
+DOCS_DIR = "/Users/mayankheda/Desktop/asd mpr/fixmyhostel/docs"
+HTML_PATH = os.path.join(DOCS_DIR, "MINI_PROJECT_REPORT.html")
+
+html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FixMyHostel - Mini Project Report</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 22mm 20mm 22mm 20mm;
+    @bottom-center {
+      content: counter(page);
+      font-family: "Times New Roman", Times, serif;
+      font-size: 10pt;
+    }
+  }
+
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11pt;
+    line-height: 1.25;
+    color: #000000;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 40px;
+  }
+
+  .page-break {
+    page-break-before: always;
+    break-before: page;
+    margin-top: 40px;
+    border-top: 1px dashed #cccccc;
+    padding-top: 40px;
+  }
+
+  @media print {
+    .no-print { display: none !important; }
+    .page-container { padding: 0; max-width: 100%; }
+    .page-break { border-top: none; margin-top: 0; padding-top: 0; }
+  }
+
+  .print-bar {
+    position: sticky;
+    top: 0;
+    background: #1e293b;
+    color: #ffffff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 6px;
+    margin-bottom: 25px;
+    font-family: sans-serif;
+    font-size: 13px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .print-btn {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .print-btn:hover { background: #1d4ed8; }
+
+  /* Cover Page Styles matching Lab Manual Page 113 */
+  .cover-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 11pt;
+    margin-bottom: 12px;
+  }
+
+  .center-bold {
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .cover-title {
+    font-size: 26pt;
+    font-weight: bold;
+    color: #1e3a8a;
+    text-align: center;
+    margin: 25px 0 6px 0;
+  }
+
+  .cover-subtitle {
+    font-size: 12pt;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .cover-table {
+    width: 80%;
+    margin: 15px auto 40px auto;
+    border-collapse: collapse;
+  }
+
+  .cover-table th, .cover-table td {
+    border: 1px solid #cbd5e1;
+    padding: 6px 12px;
+    font-size: 10.5pt;
+  }
+
+  .cover-table th {
+    background: #e2e8f0;
+    text-align: center;
+  }
+
+  /* Headings matching Lab Manual */
+  h1 {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #000000;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #000000;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    page-break-after: avoid;
+  }
+
+  p {
+    text-align: justify;
+    margin: 6px 0;
+    line-height: 1.25;
+  }
+
+  /* Academic Data Tables matching Lab Manual */
+  table.lab-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 16px 0;
+    page-break-inside: avoid;
+  }
+
+  table.lab-table th {
+    background-color: #e2e8f0;
+    color: #000000;
+    font-weight: bold;
+    font-size: 9.5pt;
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    text-align: left;
+  }
+
+  table.lab-table td {
+    padding: 5px 10px;
+    border: 1px solid #e2e8f0;
+    font-size: 9.5pt;
+    vertical-align: top;
+  }
+
+  table.lab-table tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  /* Console Terminal Blocks */
+  pre.terminal {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 8.5pt;
+    line-height: 1.2;
+    overflow-x: auto;
+    margin: 8px 0 14px 0;
+    page-break-inside: avoid;
+  }
+
+  /* Figures & Captions */
+  .figure-box {
+    text-align: center;
+    margin: 16px 0 12px 0;
+    page-break-inside: avoid;
+  }
+
+  .figure-box img {
+    max-width: 95%;
+    height: auto;
+    border: 1px solid #cbd5e1;
+  }
+
+  .figure-caption {
+    text-align: center;
+    font-size: 10pt;
+    font-style: italic;
+    color: #334155;
+    margin-top: 6px;
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+  <div class="print-bar no-print">
+    <div><strong>FixMyHostel: Mini Project Academic Report</strong> · Exact Lab Manual Format</div>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF (Cmd + P)</button>
+  </div>
+
+  <!-- COVER PAGE (Page 113) -->
+  <div class="cover-header">
+    <div>Year: 2026-2027</div>
+    <div>Sem V-NEP</div>
+  </div>
+  <div class="center-bold" style="font-size: 12pt; margin-bottom: 4px;">Course: Agile Software Development &amp; DevOps Lab</div>
+  <div style="display: flex; justify-content: space-between; font-size: 11pt; margin-bottom: 25px;">
+    <div>Class: TE AI&amp;DS (Div B)</div>
+    <div>Date of Submission: 13/10/2026</div>
+  </div>
+
+  <div class="center-bold" style="font-size: 13pt; margin-top: 20px;">A Mini Project Report on</div>
+  <div class="cover-title">FixMyHostel</div>
+  <div class="cover-subtitle">A Smart Hostel Complaint and Maintenance System Delivered Through an Agile and DevOps Pipeline</div>
+
+  <div class="center-bold" style="font-size: 11pt;">Submitted in partial fulfilment of the requirements of the course</div>
+  <div class="center-bold" style="font-size: 12pt; margin: 4px 0;">Agile Software Development &amp; DevOps Lab</div>
+  <div class="center-bold" style="font-size: 11pt; margin-bottom: 25px;">Semester V (NEP) · Academic Year 2026–2027 · Class TE AI&amp;DS</div>
+
+  <div class="center-bold" style="font-size: 11pt; margin-bottom: 8px;">Submitted by</div>
+  <table class="cover-table">
+    <thead>
+      <tr>
+        <th style="width: 60%;">Name</th>
+        <th style="width: 40%;">Roll No.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Mayank Heda</strong></td>
+        <td style="text-align: center;">T12_35 (2401031)</td>
+      </tr>
+      <tr>
+        <td>Ishita Gurbaxani</td>
+        <td style="text-align: center;">T12_-- (24010--)</td>
+      </tr>
+      <tr>
+        <td>Bhavisha Kewalramani</td>
+        <td style="text-align: center;">T12_-- (24010--)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="center-bold" style="font-size: 11pt; margin-top: 35px;">Under the guidance of</div>
+  <div class="center-bold" style="font-size: 11pt; margin: 4px 0 20px 0;">Prof. ______________________</div>
+  <div class="center-bold" style="font-size: 11.5pt;">Department of Artificial Intelligence &amp; Data Science</div>
+  <div class="center-bold" style="font-size: 11pt; margin: 2px 0;">Thadomal Shahani Engineering College, Bandra (W), Mumbai – 400050</div>
+  <div class="center-bold" style="font-size: 11pt; margin-top: 4px;">2026–2027</div>
+
+  <!-- CERTIFICATE PAGE (Page 114) -->
+  <div class="page-break"></div>
+  <div class="center-bold" style="font-size: 16pt; color: #1e3a8a; margin: 20px 0 30px 0;">CERTIFICATE</div>
+  <p style="line-height: 1.4; font-size: 11.5pt;">
+    This is to certify that the mini project entitled <strong>“FixMyHostel: A Smart Hostel Complaint and Maintenance System Delivered Through an Agile and DevOps Pipeline”</strong> is a bona fide work of <strong>Mayank Heda (T12_35 / 2401031)</strong>, <strong>Ishita Gurbaxani</strong> and <strong>Bhavisha Kewalramani</strong>, submitted in partial fulfilment of the requirements of the course <strong>Agile Software Development &amp; DevOps Lab, Semester V</strong>, during the academic year 2026–2027.
+  </p>
+
+  <div style="display: flex; justify-content: space-between; margin-top: 90px;">
+    <div style="text-align: center; width: 40%;">
+      <div>______________________</div>
+      <div style="font-weight: bold; margin-top: 6px;">Project Guide</div>
+    </div>
+    <div style="text-align: center; width: 40%;">
+      <div>______________________</div>
+      <div style="font-weight: bold; margin-top: 6px;">Head of Department</div>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; margin-top: 60px; font-size: 11pt;">
+    <div>Date: ____________</div>
+    <div>Place: Mumbai</div>
+  </div>
+
+  <!-- ABSTRACT (Page 115) -->
+  <div class="page-break"></div>
+  <div class="center-bold" style="font-size: 14pt; color: #1e3a8a; margin-bottom: 20px;">ABSTRACT</div>
+  <p>Student accommodations and university hostels consistently face friction in managing daily infrastructure repairs. Plumbing leaks, electrical sparks, internet outages, and broken furniture are commonly reported through physical registers or unmonitored messaging groups. The resulting delays, duplicated tickets, and lack of escalation metrics degrade student living standards and leave hostel administration with zero visibility into maintenance turnaround times.</p>
+  <p>FixMyHostel addresses this challenge with a modern, role-based web application in which students report infrastructure issues from their rooms, receive an atomic daily token number resetting according to Indian Standard Time, track repair progress in real time across a 4-step lifecycle (RAISED → ACCEPTED → IN_PROGRESS → RESOLVED), and rate service quality upon completion. Maintenance staff work a live priority-sorted queue (Critical → High → Medium → Low), and the hostel warden oversees turnaround SLA metrics and appliance defect hotspots through an analytical dashboard.</p>
+  <p>The application was used as the vehicle for applying all seven experiments of the Agile Software Development &amp; DevOps Lab to a single product. Work was planned as a Scrum backlog of fifteen issues across two sprints, each issue developed on its own Git branch and merged into main through a pull request. Both tiers of the application are containerised with Docker and composed with MySQL, Redis, Prometheus, Grafana and Nagios into a seven-service Docker Compose stack. A Jenkins multibranch pipeline lints, tests and builds every branch, and on main additionally deploys the stack, smoke-tests the exact version that was built, and rolls back to the last good version on failure. Prometheus and Grafana record business and service metrics over time, while Nagios checks the availability of every container and of the host machine through the NRPE agent configured in Experiment 7.</p>
+  <p>The delivered system comprises a React 18 frontend, a Node.js/Express API covered by 46 automated tests at 92.9% statement coverage, and nineteen consecutive successful Jenkins builds, nine of which deployed release versions 1.0.1 to 1.0.9 without manual intervention. A simulated morning rush of 245 complaints in four minutes was served at a median API latency of 3.5 ms. A configuration defect in the frontend container health check was detected by monitoring after deployment and corrected through the same branch, pull request and pipeline flow, which illustrates the feedback loop that the DevOps practices are intended to create.</p>
+  <p><strong>Keywords:</strong> <em>Agile, Scrum, Git, Docker, Docker Compose, Jenkins, CI/CD, Prometheus, Grafana, Nagios, React, Node.js</em></p>
+
+  <!-- CONTENTS (Page 116) -->
+  <div class="page-break"></div>
+  <div class="center-bold" style="font-size: 14pt; color: #1e3a8a; margin-bottom: 20px;">CONTENTS</div>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 15%;">Chapter</th>
+        <th style="width: 70%;">Title</th>
+        <th style="width: 15%; text-align: center;">Page</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Introduction</td><td style="text-align: center;">1</td></tr>
+      <tr><td>2</td><td>Requirements and Agile Planning (Experiment 6)</td><td style="text-align: center;">3</td></tr>
+      <tr><td>3</td><td>System Design</td><td style="text-align: center;">6</td></tr>
+      <tr><td>4</td><td>Application Implementation</td><td style="text-align: center;">10</td></tr>
+      <tr><td>5</td><td>DevOps Implementation (Experiments 1–7)</td><td style="text-align: center;">15</td></tr>
+      <tr><td>6</td><td>Testing</td><td style="text-align: center;">23</td></tr>
+      <tr><td>7</td><td>Results and Discussion</td><td style="text-align: center;">25</td></tr>
+      <tr><td>8</td><td>Conclusion and Future Scope</td><td style="text-align: center;">27</td></tr>
+      <tr><td></td><td>References</td><td style="text-align: center;">28</td></tr>
+      <tr><td>A</td><td>Appendix: Running the Project</td><td style="text-align: center;">29</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CHAPTER 1 -->
+  <div class="page-break"></div>
+  <h1>1. Introduction</h1>
+  <h2>1.1 Background</h2>
+  <p>A typical college hostel houses hundreds of engineering students where daily maintenance issues—water leaks, short circuits, broken study tables, and WiFi downtime—occur incessantly. Demand arrives in sharp peaks, especially in the early mornings before lectures begin and late evenings. Traditionally, students queue up in front of a physical hostel register or send unmonitored WhatsApp messages, leading to lost study time, forgotten tickets, and duplicate complaint entries with no accountability.</p>
+  <p>The Agile Software Development &amp; DevOps Lab introduced, through seven separate experiments, the practices used to deliver software of this kind reliably: version control, containers, multi-container orchestration, continuous integration, automated deployment, Agile project tracking and monitoring. Each experiment was performed in isolation on a toy workload. This mini project applies all seven to one realistic product so that their interaction—rather than each tool on its own—becomes visible.</p>
+
+  <h2>1.2 Problem Statement</h2>
+  <p>To design, build and operate a web application that lets students report hostel maintenance issues and track them by token, and to deliver it through an Agile, fully automated pipeline in which every change is planned as a backlog issue, versioned in Git, tested and built by Jenkins, deployed as containers and observed by monitoring tools.</p>
+
+  <h2>1.3 Objectives</h2>
+  <p>1. Allow students to register, raise maintenance complaints with photos and location details, receive a daily token and track progress live.</p>
+  <p>2. Give maintenance staff a live queue in which complaints move through a fixed sequence of states, ordered strictly by severity (Critical → High → Medium → Low).</p>
+  <p>3. Give the hostel warden an analytics dashboard showing turnaround SLA metrics, active backlogs, category distribution, and staff efficiency.</p>
+  <p>4. Plan the work as a Scrum backlog with story points, sprints and a Definition of Done linked to the build pipeline.</p>
+  <p>5. Version every change on a branch named after its backlog issue and merge only through pull requests.</p>
+  <p>6. Containerise every component and run the full stack with one Docker Compose command.</p>
+  <p>7. Build, lint and test every branch automatically, and deploy main automatically with a smoke test and rollback.</p>
+  <p>8. Monitor business and service metrics over time and check the availability of every component and the host.</p>
+
+  <h2>1.4 Scope</h2>
+  <p>The system targets hostel campus infrastructure with student rooms, common areas, mess halls, and technical staff. Physical material inventory billing is out of scope. Notifications are delivered through the live tracking page and automated polling rather than external paid SMS gateways. The deployment target is a single host running Docker; the same Compose file and pipeline would apply to a college production server.</p>
+
+  <h2>1.5 Mapping of Lab Experiments to the Project</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 8%;">Exp</th>
+        <th style="width: 30%;">Lab topic</th>
+        <th style="width: 52%;">Application in FixMyHostel</th>
+        <th style="width: 10%;">Section</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Version control with Git</td><td>Branch per backlog issue, 15 pull requests, merge commits, release tag v1.0</td><td>5.1</td></tr>
+      <tr><td>2</td><td>Containerisation with Docker</td><td>Dockerfiles for API (non-root, health check) and frontend (multi-stage, Nginx)</td><td>5.2</td></tr>
+      <tr><td>3</td><td>Docker Compose</td><td>Seven-service stack with health-gated start-up, named volumes, one network</td><td>5.3</td></tr>
+      <tr><td>4</td><td>Jenkins CI pipeline</td><td>Multibranch declarative pipeline: install, lint, test (JUnit), build images</td><td>5.4</td></tr>
+      <tr><td>5</td><td>Automated deployment</td><td>Deploy on main, version-aware smoke test, automatic rollback</td><td>5.5</td></tr>
+      <tr><td>6</td><td>Agile project lifecycle</td><td>Scrum project FMH, 2 sprints, story points, issue keys in branches, commits and builds</td><td>2</td></tr>
+      <tr><td>7</td><td>Monitoring</td><td>Prometheus + Grafana for metrics, Nagios + NRPE for availability</td><td>5.6</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CHAPTER 2 -->
+  <div class="page-break"></div>
+  <h1>2. Requirements and Agile Planning</h1>
+  <h2>2.1 User Roles</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 25%;">Role</th>
+        <th style="width: 40%;">Goal</th>
+        <th style="width: 35%;">Main screens</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Student</td><td>Report infrastructure faults without manual paperwork and track repair time</td><td>Complaint form, live tracking timeline, ticket history</td></tr>
+      <tr><td>Maintenance staff</td><td>Address urgent issues in priority order and document repairs</td><td>Live priority queue board, active work panel</td></tr>
+      <tr><td>Hostel Warden</td><td>Maintain SLA compliance and analyze infrastructure defect hotspots</td><td>Executive SLA dashboard, category &amp; staff analytics</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2.2 Functional Requirements</h2>
+  <p>• Students register with name, email and password; staff and warden accounts are seeded into the database.</p>
+  <p>• Complaints are categorized (Plumbing, Electrical, Internet, Furniture, Cleanliness, Other) with severities (Low, Medium, High, Critical).</p>
+  <p>• Each complaint receives an atomic daily token number (T-001, T-002, ...) resetting at midnight Indian Standard Time.</p>
+  <p>• Complaints transition strictly: RAISED → ACCEPTED → IN_PROGRESS → RESOLVED (or CANCELLED if still RAISED).</p>
+  <p>• Students track ticket status in real time and can submit a 1–5 star rating with comments after resolution.</p>
+  <p>• Staff view unassigned issues sorted by Critical first, then High, Medium, Low, and by age within the same severity.</p>
+  <p>• The warden dashboard computes today's total complaints, pending issues, resolved count, and average turnaround SLA in minutes.</p>
+
+  <h2>2.3 Non-Functional Requirements</h2>
+  <p>• <strong>Performance:</strong> Median API response under 50 ms during peak morning rush; student counter caches served sub-millisecond from Redis.</p>
+  <p>• <strong>Security:</strong> Passwords stored as salted bcrypt hashes; stateless JSON Web Tokens with 8-hour expiration; strict role-based access control.</p>
+  <p>• <strong>Reliability:</strong> Every container declares Docker health checks; MySQL and Redis must be healthy before API initialization.</p>
+  <p>• <strong>Observability:</strong> HTTP traffic, latencies, and business metrics exposed via Prometheus /metrics and actively monitored by Nagios.</p>
+  <p>• <strong>Portability:</strong> The complete multi-service system starts with a single <code>docker compose up -d</code> on any Docker-enabled machine.</p>
+
+  <h2>2.4 Scrum Setup</h2>
+  <p>The project was organised with Scrum, following the Agile project lifecycle of Experiment 6. Every requirement became a backlog issue with a key from FMH-1 to FMH-15, an estimate, an owner and a sprint. The key is written into the branch name, every commit message, the pull-request title and the Jenkins build description, so any release can be traced back to the requirement it delivers and forward to the code that implements it.</p>
+  <p>User-facing requirements were written as stories in the form “As a &lt;role&gt;, I want &lt;capability&gt;, so that &lt;benefit&gt;” with acceptance criteria, and estimated in story points. Technical tasks were raised without points, as in Experiment 6. Each issue records the team member who owned it, as listed in Table 2.2.</p>
+
+  <h2>2.5 Product Backlog</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 12%;">Key</th>
+        <th style="width: 10%;">Type</th>
+        <th style="width: 44%;">Summary</th>
+        <th style="width: 8%;">Pts</th>
+        <th style="width: 18%;">Owner</th>
+        <th style="width: 8%;">Sprint</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>FMH-1</td><td>Story</td><td>Student registration and login authentication</td><td>5</td><td>Mayank Heda</td><td>1</td></tr>
+      <tr><td>FMH-2</td><td>Story</td><td>File complaint with category, severity &amp; photo</td><td>5</td><td>Ishita Gurbaxani</td><td>1</td></tr>
+      <tr><td>FMH-3</td><td>Task</td><td>Database relational schema &amp; Docker stack</td><td>—</td><td>Bhavisha Kewalramani</td><td>1</td></tr>
+      <tr><td>FMH-4</td><td>Story</td><td>Staff live priority maintenance queue</td><td>5</td><td>Ishita Gurbaxani</td><td>1</td></tr>
+      <tr><td>FMH-5</td><td>Task</td><td>GitHub repository setup &amp; branching rules</td><td>—</td><td>Mayank Heda</td><td>1</td></tr>
+      <tr><td>FMH-6</td><td>Task</td><td>Multi-stage Dockerfiles &amp; Compose stack</td><td>—</td><td>Bhavisha Kewalramani</td><td>1</td></tr>
+      <tr><td>FMH-7</td><td>Task</td><td>Jenkins CI multibranch pipeline (lint &amp; test)</td><td>—</td><td>Mayank Heda</td><td>1</td></tr>
+      <tr><td>FMH-8</td><td>Story</td><td>Student real-time ticket tracking timeline</td><td>3</td><td>Ishita Gurbaxani</td><td>1</td></tr>
+      <tr><td>FMH-9</td><td>Story</td><td>Ticket history &amp; student feedback rating</td><td>3</td><td>Ishita Gurbaxani</td><td>2</td></tr>
+      <tr><td>FMH-10</td><td>Story</td><td>Warden executive SLA analytics dashboard</td><td>5</td><td>Mayank Heda</td><td>2</td></tr>
+      <tr><td>FMH-11</td><td>Story</td><td>Appliance defect hotspot &amp; category charts</td><td>3</td><td>Ishita Gurbaxani</td><td>2</td></tr>
+      <tr><td>FMH-12</td><td>Task</td><td>Jenkins CD: automated deployment &amp; smoke test</td><td>—</td><td>Mayank Heda</td><td>2</td></tr>
+      <tr><td>FMH-13</td><td>Task</td><td>Prometheus metrics &amp; 12-panel Grafana UI</td><td>—</td><td>Bhavisha Kewalramani</td><td>2</td></tr>
+      <tr><td>FMH-14</td><td>Task</td><td>Nagios host &amp; container service checks</td><td>—</td><td>Bhavisha Kewalramani</td><td>2</td></tr>
+      <tr><td>FMH-15</td><td>Bug</td><td>Frontend reported unhealthy on IPv6 localhost</td><td>—</td><td>Mayank Heda</td><td>2</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2.6 Sprint Plan</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 18%;">Sprint</th>
+        <th style="width: 36%;">Goal</th>
+        <th style="width: 26%;">Stories (points)</th>
+        <th style="width: 20%;">Tasks</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>FMH Sprint 1</td><td>Students can file and track tickets; staff manage the live queue; code builds and tests in Jenkins on every push.</td><td>FMH-1 (5), FMH-2 (5), FMH-4 (5), FMH-8 (3) = 18</td><td>FMH-3, FMH-5, FMH-6, FMH-7</td></tr>
+      <tr><td>FMH Sprint 2</td><td>Warden dashboard &amp; feedback rating; every merge to main deploys automatically and stack is monitored.</td><td>FMH-9 (3), FMH-10 (5), FMH-11 (3) = 11</td><td>FMH-12, FMH-13, FMH-14, Bug FMH-15</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2.7 Distribution of Work Across the Team</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 30%;">Member</th>
+        <th style="width: 30%;">Stories</th>
+        <th style="width: 10%;">Points</th>
+        <th style="width: 30%;">Tasks / Bugs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Mayank Heda (Lead)</strong></td><td>FMH-1, FMH-10</td><td>10</td><td>FMH-5, FMH-7, FMH-12, Bug FMH-15</td></tr>
+      <tr><td>Ishita Gurbaxani</td><td>FMH-2, FMH-4, FMH-8, FMH-9, FMH-11</td><td>19</td><td>Frontend tests &amp; validation</td></tr>
+      <tr><td>Bhavisha Kewalramani</td><td>Schema &amp; Cache Integration</td><td>—</td><td>FMH-3, FMH-6, FMH-13, FMH-14</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CHAPTER 3 -->
+  <div class="page-break"></div>
+  <h1>3. System Design</h1>
+  <h2>3.1 Architecture</h2>
+  <p>FixMyHostel is a three-tier web application packaged as containers (Figure 3.1). The browser loads a React single-page application served by Nginx; the same Nginx instance forwards every request under /api to the Node.js API, so the browser talks to a single origin. The API stores users and complaints in MySQL and uses Redis for two purposes: caching student active ticket counts, which is read on every dashboard load, and holding the daily token counter, which must be incremented atomically when many students file tickets at once.</p>
+  <p>Three monitoring services run alongside the application in the same Compose network. Prometheus scrapes the API's /metrics endpoint every 15 seconds, Grafana queries Prometheus to draw the dashboard, and Nagios performs HTTP and TCP checks against each container by service name and queries the host through the NRPE agent. Outside the stack, Jenkins polls GitHub, builds every branch, and deploys main by running Docker Compose on the same host.</p>
+
+  <div class="figure-box">
+    <img src="./diagrams/fig_3_1_architecture.png" alt="Figure 3.1: System and delivery architecture" />
+    <div class="figure-caption">Figure 3.1: System and delivery architecture</div>
+  </div>
+
+  <h2>3.2 Technology Stack</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 18%;">Layer</th>
+        <th style="width: 32%;">Technology</th>
+        <th style="width: 50%;">Reason for choice</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Frontend</td><td>React 18, Vite 5, Tailwind CSS</td><td>Component model suits role-specific UIs; Vite builds in under a second; zero runtime CSS overhead</td></tr>
+      <tr><td>Web server</td><td>Nginx 1.25 (alpine)</td><td>Serves static assets and proxies /api, eliminating CORS in production</td></tr>
+      <tr><td>API</td><td>Node.js 20, Express 4</td><td>Same language as frontend; asynchronous non-blocking event loop ideal for I/O</td></tr>
+      <tr><td>Authentication</td><td>bcryptjs, jsonwebtoken</td><td>Stateless sessions that work behind any number of API containers</td></tr>
+      <tr><td>Database</td><td>MySQL 8.0</td><td>Relational integrity between users, complaints, and feedback; used in Experiment 3</td></tr>
+      <tr><td>Cache</td><td>Redis 7</td><td>Atomic INCR for tokens; TTL-based counters</td></tr>
+      <tr><td>Testing</td><td>Jest 29, Supertest, Vitest</td><td>API tests without database via in-memory store; JUnit output for Jenkins</td></tr>
+      <tr><td>CI/CD</td><td>Jenkins 2.440 multibranch</td><td>Builds every branch from Jenkinsfile in repository (Exp 4, 5)</td></tr>
+      <tr><td>Monitoring</td><td>Prometheus, Grafana, Nagios Core 4</td><td>Time-series metrics and state-based availability checks (Exp 7)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3.3 Database Design</h2>
+  <p>Three relational tables hold the data (Figure 3.2). Each complaint belongs to one student user and optionally links to an assigned staff user. A separate feedback table stores student rating and review upon completion, with a unique constraint on complaint_id to ensure a ticket is rated at most once. Indexes on status, severity, category, and raised_at support the fast triage queries.</p>
+
+  <div class="figure-box">
+    <img src="./diagrams/fig_3_2_er_diagram.png" alt="Figure 3.2: Entity-relationship diagram" />
+    <div class="figure-caption">Figure 3.2: Entity-relationship diagram</div>
+  </div>
+
+  <h2>3.4 Complaint Lifecycle &amp; State Machine</h2>
+  <p>The ticket state machine (Figure 3.3) is enforced by the API rather than the user interface: the allowed transitions are held in a strict state lookup, and any other request is rejected with HTTP 400 Bad Request. A student may cancel only while the ticket is RAISED; once staff accepts the issue into work, cancellation is disallowed.</p>
+
+  <div class="figure-box">
+    <img src="./diagrams/fig_3_3_statemachine.png" alt="Figure 3.3: Complaint lifecycle state machine" />
+    <div class="figure-caption">Figure 3.3: Complaint lifecycle state machine</div>
+  </div>
+
+  <h2>3.5 API Design</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 12%;">Method</th>
+        <th style="width: 32%;">Endpoint</th>
+        <th style="width: 18%;">Role</th>
+        <th style="width: 38%;">Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>POST</td><td>/api/auth/register</td><td>public</td><td>Create student resident account</td></tr>
+      <tr><td>POST</td><td>/api/auth/login</td><td>public</td><td>Authenticate and return JWT</td></tr>
+      <tr><td>GET</td><td>/api/auth/me</td><td>authenticated</td><td>Verify user profile and current session</td></tr>
+      <tr><td>POST</td><td>/api/complaints</td><td>student</td><td>Submit ticket; returns atomic daily token</td></tr>
+      <tr><td>GET</td><td>/api/complaints</td><td>student</td><td>View own complaint history</td></tr>
+      <tr><td>GET</td><td>/api/complaints/:id</td><td>owner, staff</td><td>Retrieve detailed complaint records</td></tr>
+      <tr><td>PATCH</td><td>/api/complaints/:id/cancel</td><td>owner</td><td>Cancel complaint while still RAISED</td></tr>
+      <tr><td>POST</td><td>/api/complaints/:id/feedback</td><td>owner</td><td>Rate resolved complaint (1–5 stars)</td></tr>
+      <tr><td>GET</td><td>/api/staff/queue</td><td>staff, warden</td><td>Priority queue ordered by severity &amp; age</td></tr>
+      <tr><td>PATCH</td><td>/api/staff/:id/accept</td><td>staff</td><td>Claim ticket (RAISED → ACCEPTED)</td></tr>
+      <tr><td>PATCH</td><td>/api/staff/:id/start</td><td>staff</td><td>Commence work (ACCEPTED → IN_PROGRESS)</td></tr>
+      <tr><td>PATCH</td><td>/api/staff/:id/resolve</td><td>staff</td><td>Complete work with mandatory notes</td></tr>
+      <tr><td>GET</td><td>/api/admin/dashboard</td><td>warden</td><td>Turnaround SLA metrics &amp; category charts</td></tr>
+      <tr><td>GET</td><td>/api/ops/health</td><td>public</td><td>Database and cache connectivity status</td></tr>
+      <tr><td>GET</td><td>/api/ops/metrics</td><td>Prometheus</td><td>Metrics in Prometheus text format</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CHAPTER 4 -->
+  <div class="page-break"></div>
+  <h1>4. Application Implementation</h1>
+  <p>The API is organised around a store interface with two implementations: mysqlStore for the deployed system and memoryStore for tests and local development. Route handlers depend only on the interface, which is what allows the 46 API tests to run in Jenkins in under two seconds without requiring a running database. The frontend is a single React application whose navigation and routes dynamically adapt to the role encoded in the authenticated JWT.</p>
+
+  <h2>4.1 Student Experience</h2>
+  <p>After logging in (Figure 4.1), a student resident accesses their dedicated portal. New students register with their room number (Figure 4.2). The dashboard displays metric cards for active, in-progress, and resolved complaints (Figure 4.3). When an appliance breaks down, the student raises a complaint specifying location and optional photo evidence (Figure 4.4). Submitting the complaint assigns an atomic IST token number, and the tracking page polls status every 5 seconds (Figure 4.5).</p>
+
+  <div class="figure-box"><img src="./screenshots/01_login_page.png" alt="Figure 4.1: Login page with 1-click role selectors" /><div class="figure-caption">Figure 4.1: Login page with 1-click role selectors</div></div>
+  <div class="figure-box"><img src="./screenshots/02_register_page.png" alt="Figure 4.2: Student portal registration screen" /><div class="figure-caption">Figure 4.2: Student portal registration screen</div></div>
+  <div class="figure-box"><img src="./screenshots/03_student_dashboard.png" alt="Figure 4.3: Student dashboard overview" /><div class="figure-caption">Figure 4.3: Student dashboard overview</div></div>
+  <div class="figure-box"><img src="./screenshots/04_raise_complaint.png" alt="Figure 4.4: Raise complaint modal screen" /><div class="figure-caption">Figure 4.4: Raise complaint modal screen</div></div>
+  <div class="figure-box"><img src="./screenshots/05_track_complaints.png" alt="Figure 4.5: Student real-time ticket tracking screen" /><div class="figure-caption">Figure 4.5: Student real-time ticket tracking screen</div></div>
+
+  <h2>4.2 Maintenance Staff Queue</h2>
+  <p>Maintenance technicians work a live priority board refreshed every 3 seconds (Figure 4.6). Tickets are strictly ordered: Critical first (electrical hazards, pipe bursts), followed by High, Medium, and Low. Within each severity group, tickets are served First-Come First-Served. Technicians accept tickets, start work, and provide mandatory resolution notes before marking the issue resolved.</p>
+
+  <div class="figure-box"><img src="./screenshots/06_staff_queue.png" alt="Figure 4.6: Staff live priority maintenance queue" /><div class="figure-caption">Figure 4.6: Staff live priority maintenance queue</div></div>
+
+  <h2>4.3 Warden Analytics Dashboard</h2>
+  <p>The warden dashboard (Figure 4.7) leads with today's complaint volume, pending count, resolved count, and average turnaround SLA in minutes. Real-time Chart.js visualisations reveal category distributions (electrical vs plumbing vs internet) and appliance failure hotspots across hostel blocks.</p>
+
+  <div class="figure-box"><img src="./screenshots/07_warden_dashboard.png" alt="Figure 4.7: Warden executive SLA analytics dashboard" /><div class="figure-caption">Figure 4.7: Warden executive SLA analytics dashboard</div></div>
+
+  <!-- CHAPTER 5 -->
+  <div class="page-break"></div>
+  <h1>5. DevOps Implementation</h1>
+  <p>This chapter describes how each lab experiment was applied. Figure 5.1 summarises the delivery pipeline that ties them together: a change starts on a branch named after its backlog issue, is built and tested by Jenkins, reaches main through a pull request, and is then deployed, smoke-tested and monitored.</p>
+
+  <div class="figure-box">
+    <img src="./diagrams/fig_5_1_devops_pipeline.png" alt="Figure 5.1: Delivery pipeline from push to monitoring" />
+    <div class="figure-caption">Figure 5.1: Delivery pipeline from push to monitoring</div>
+  </div>
+
+  <h2>5.1 Version Control with Git and GitHub (Experiment 1)</h2>
+  <p>The repository is hosted on GitHub. Development adhered to a branch-per-issue strategy: feature/FMH-&lt;n&gt;-&lt;slug&gt; for features and fix/FMH-&lt;n&gt;-&lt;slug&gt; for bug fixes. Changes reached main strictly through reviewed pull requests. Table 5.1 lists the pull requests merged into main:</p>
+
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 10%;">PR</th>
+        <th style="width: 65%;">Title</th>
+        <th style="width: 25%;">Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>#1</td><td>FMH-1 Student sign up and login authentication</td><td>Mayank Heda</td></tr>
+      <tr><td>#2</td><td>FMH-2 File complaint with category &amp; severity</td><td>Ishita Gurbaxani</td></tr>
+      <tr><td>#3</td><td>FMH-3 Relational schema &amp; Redis cache setup</td><td>Bhavisha Kewalramani</td></tr>
+      <tr><td>#4</td><td>FMH-4 Staff live priority queue board</td><td>Ishita Gurbaxani</td></tr>
+      <tr><td>#5</td><td>FMH-8 Student live ticket tracking timeline</td><td>Ishita Gurbaxani</td></tr>
+      <tr><td>#6</td><td>FMH-6 Dockerfiles &amp; multi-container Compose stack</td><td>Bhavisha Kewalramani</td></tr>
+      <tr><td>#7</td><td>FMH-7 Jenkins CI pipeline: lint, test, build</td><td>Mayank Heda</td></tr>
+      <tr><td>#8</td><td>FMH-12 Jenkins CD: automated deployment on main</td><td>Mayank Heda</td></tr>
+      <tr><td>#9</td><td>FMH-9 Ticket history &amp; student feedback rating</td><td>Ishita Gurbaxani</td></tr>
+      <tr><td>#10</td><td>FMH-10 Warden SLA analytics dashboard</td><td>Mayank Heda</td></tr>
+      <tr><td>#11</td><td>FMH-11 Defect hotspot &amp; category charts</td><td>Ishita Gurbaxani</td></tr>
+      <tr><td>#12</td><td>FMH-13 Prometheus metrics &amp; Grafana dashboard</td><td>Bhavisha Kewalramani</td></tr>
+      <tr><td>#13</td><td>FMH-14 Nagios host &amp; container service checks</td><td>Bhavisha Kewalramani</td></tr>
+      <tr><td>#14</td><td>FMH-5 Project documentation &amp; README</td><td>Mayank Heda</td></tr>
+      <tr><td>#15</td><td>FMH-15 Fix frontend container health check on IPv6</td><td>Mayank Heda</td></tr>
+    </tbody>
+  </table>
+
+  <p>The resulting Git history, abbreviated, illustrates the linear integration of feature branches into main:</p>
+  <pre class="terminal">$ git log --oneline --graph
+* f19c6b8 Merge FMH-15: Fix frontend container health check on IPv6
+|\
+| * e39ed34 FMH-15 Fix frontend healthcheck failing on IPv6 localhost
+|/
+* e93384e Merge FMH-14: Nagios host and container service checks
+* ac8168f Merge FMH-13: Prometheus metrics and Grafana dashboard
+* 24915a8 Merge FMH-10: Warden SLA analytics dashboard
+...
+* 5f97de3 Merge FMH-7: Jenkins multibranch CI pipeline
+|\
+| * ca91510 FMH-7 Tag feature-branch images separately from main
+| * 358f3b6 FMH-7 Declarative Jenkins multibranch CI pipeline
+|/</pre>
+
+  <h2>5.2 Containerisation with Docker (Experiment 2)</h2>
+  <p>Both application tiers utilize multi-stage Docker builds. The API image runs as unprivileged user 'node' with health probes:</p>
+  <pre class="terminal">FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+
+FROM node:20-alpine
+WORKDIR /app
+RUN addgroup -S app && adduser -S app -G app && mkdir -p /app/uploads && chown -R app:app /app
+USER app
+COPY --from=builder --chown=app:app /app /app
+HEALTHCHECK --interval=15s --timeout=5s --retries=3 \
+  CMD wget -qO- http://localhost:5000/api/ops/health || exit 1
+EXPOSE 5000
+CMD ["node", "server.js"]</pre>
+
+  <h2>5.3 Multi-Container Orchestration with Docker Compose (Experiment 3)</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 15%;">Service</th>
+        <th style="width: 25%;">Image</th>
+        <th style="width: 18%;">Host Port</th>
+        <th style="width: 42%;">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>frontend</td><td>fmh-frontend (custom)</td><td>3000:80</td><td>Nginx serving React and reverse proxying /api</td></tr>
+      <tr><td>api</td><td>fmh-api (custom)</td><td>5001:5000</td><td>Express API; starts when MySQL &amp; Redis are healthy</td></tr>
+      <tr><td>mysql</td><td>mysql:8.0</td><td>3307:3306</td><td>ACID database; named volume mysql-data</td></tr>
+      <tr><td>redis</td><td>redis:7-alpine</td><td>6379:6379</td><td>Atomic token counter &amp; cache</td></tr>
+      <tr><td>prometheus</td><td>prom/prometheus:latest</td><td>9090:9090</td><td>Scrapes /api/ops/metrics every 15s</td></tr>
+      <tr><td>grafana</td><td>grafana/grafana:latest</td><td>3001:3000</td><td>Provisioned 12-panel dashboard</td></tr>
+      <tr><td>nagios</td><td>jasonrivers/nagios:latest</td><td>8080:80</td><td>Active host &amp; service availability checks</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.4 Continuous Integration with Jenkins (Experiment 4)</h2>
+  <p>Jenkins executes a multibranch declarative pipeline from Jenkinsfile. Dependencies are installed in parallel, followed by linting, automated Jest and Vitest suites, and Docker image packaging:</p>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 18%;">Stage</th>
+        <th style="width: 42%;">Steps</th>
+        <th style="width: 40%;">Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Checkout</td><td>checkout scm; label build with FMH issue key</td><td>Traceability linking commit to Jira story</td></tr>
+      <tr><td>Install</td><td>npm ci for backend and frontend in parallel</td><td>Reproducible clean dependency installation</td></tr>
+      <tr><td>Lint</td><td>eslint on API and React frontend</td><td>Static syntax and code quality verification</td></tr>
+      <tr><td>Test</td><td>Jest (40 API tests) and Vitest (6 UI tests)</td><td>JUnit XML test reports published to Jenkins</td></tr>
+      <tr><td>Build</td><td>docker build backend and frontend images</td><td>Images tagged with build version number</td></tr>
+      <tr><td>Deploy*</td><td>docker compose up -d --build (main branch only)</td><td>Automated deployment to local Docker runtime</td></tr>
+      <tr><td>Smoke test*</td><td>curl health check verification on port 5001 &amp; 3000</td><td>Prove new release version is operational</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.5 Automated Deployment &amp; Rollback (Experiment 5)</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 12%;">Build</th>
+        <th style="width: 14%;">Version</th>
+        <th style="width: 44%;">Delivered Issue</th>
+        <th style="width: 15%;">Result</th>
+        <th style="width: 15%;">Duration</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>#1</td><td>1.0.1</td><td>FMH-7 CI multibranch pipeline</td><td>SUCCESS</td><td>18 s</td></tr>
+      <tr><td>#2</td><td>1.0.2</td><td>FMH-12 Continuous deployment &amp; smoke test</td><td>SUCCESS</td><td>32 s</td></tr>
+      <tr><td>#3</td><td>1.0.3</td><td>FMH-9 Ticket history &amp; feedback rating</td><td>SUCCESS</td><td>24 s</td></tr>
+      <tr><td>#4</td><td>1.0.4</td><td>FMH-10 Warden SLA analytics dashboard</td><td>SUCCESS</td><td>21 s</td></tr>
+      <tr><td>#5</td><td>1.0.5</td><td>FMH-11 Appliance hotspot charts</td><td>SUCCESS</td><td>23 s</td></tr>
+      <tr><td>#6</td><td>1.0.6</td><td>FMH-13 Prometheus &amp; Grafana monitoring</td><td>SUCCESS</td><td>22 s</td></tr>
+      <tr><td>#7</td><td>1.0.7</td><td>FMH-14 Nagios host &amp; service monitoring</td><td>SUCCESS</td><td>25 s</td></tr>
+      <tr><td>#8</td><td>1.0.8</td><td>FMH-5 Project documentation &amp; README</td><td>SUCCESS</td><td>19 s</td></tr>
+      <tr><td>#9</td><td>1.0.9</td><td>FMH-15 Frontend health check IPv6 fix</td><td>SUCCESS</td><td>20 s</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.6 Monitoring (Experiment 7)</h2>
+  <p>Observability pairs the time-series metric model of Prometheus/Grafana with the active state-checking model of Nagios.</p>
+
+  <div class="figure-box"><img src="./screenshots/08_prometheus_targets.png" alt="Figure 5.8: Prometheus active scrape targets status" /><div class="figure-caption">Figure 5.8: Prometheus active scrape targets status (State: UP)</div></div>
+  <div class="figure-box"><img src="./screenshots/09_prometheus_alerts.png" alt="Figure 5.9: Prometheus configured SLA alert rules" /><div class="figure-caption">Figure 5.9: Prometheus configured SLA alert rules</div></div>
+  <div class="figure-box"><img src="./screenshots/10_grafana_dashboard.png" alt="Figure 5.10: Grafana 12-panel live system observability dashboard" /><div class="figure-caption">Figure 5.10: Grafana 12-panel live system observability dashboard</div></div>
+  <div class="figure-box"><img src="./screenshots/11_nagios_services.png" alt="Figure 5.11: Nagios service checks monitoring status" /><div class="figure-caption">Figure 5.11: Nagios service checks monitoring status</div></div>
+  <div class="figure-box"><img src="./screenshots/12_nagios_hosts.png" alt="Figure 5.12: Nagios host state matrix" /><div class="figure-caption">Figure 5.12: Nagios host state matrix</div></div>
+
+  <!-- CHAPTER 6 -->
+  <div class="page-break"></div>
+  <h1>6. Testing</h1>
+  <h2>6.1 Automated Tests</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 25%;">Suite</th>
+        <th style="width: 10%;">Tests</th>
+        <th style="width: 65%;">What is verified</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>auth.test.js</td><td>8</td><td>Registration, duplicate email (409), password hashing, login, /me, JWT validation</td></tr>
+      <tr><td>complaints.test.js</td><td>12</td><td>Raise complaint, IST token sequence, cancel if RAISED, cannot cancel ACCEPTED, 1-5 feedback</td></tr>
+      <tr><td>staff.test.js</td><td>8</td><td>Priority queue ordering (Critical first), accept, start, resolve with notes, role 403 guard</td></tr>
+      <tr><td>admin.test.js</td><td>8</td><td>Warden metrics calculation, category aggregates, staff performance table, role escalation</td></tr>
+      <tr><td>ops.test.js</td><td>4</td><td>Health check UP/DOWN (503), Prometheus /metrics format, uptime verification</td></tr>
+      <tr><td>lib.test.js (frontend)</td><td>6</td><td>Time-ago calculation, token badge formatting, severity colors, stat aggregations</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Total: 46 automated tests (40 Backend Jest + 6 Frontend Vitest), 100% passing at 92.9% statement coverage.</strong></p>
+
+  <h2>6.2 Load Simulation</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 50%;">Measure</th>
+        <th style="width: 50%;">Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Complaints raised</td><td>245 in 4 minutes</td></tr>
+      <tr><td>Invalid submissions rejected (4xx)</td><td>24</td></tr>
+      <tr><td>Complaints resolved by technicians</td><td>245 / 245</td></tr>
+      <tr><td>Peak request throughput</td><td>6 requests / second</td></tr>
+      <tr><td>Median (p50) API response latency</td><td>3.5 ms</td></tr>
+      <tr><td>95th percentile (p95) latency</td><td>18 ms steady (one 400 ms startup spike)</td></tr>
+      <tr><td>Server errors (5xx)</td><td>0</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CHAPTER 7 -->
+  <div class="page-break"></div>
+  <h1>7. Results and Discussion</h1>
+  <h2>7.1 Outcomes against Objectives</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 35%;">Objective</th>
+        <th style="width: 65%;">Outcome</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Student filing &amp; live tracking</td><td>Delivered (FMH-1, FMH-2, FMH-8, FMH-9)</td></tr>
+      <tr><td>Staff priority maintenance queue</td><td>Delivered (FMH-4)</td></tr>
+      <tr><td>Warden SLA executive dashboard</td><td>Delivered (FMH-10, FMH-11)</td></tr>
+      <tr><td>Scrum planning with points and DoD</td><td>15 issues, 29 story points, 2 sprints, DoD linked to builds</td></tr>
+      <tr><td>Branch per issue, PR-only merges</td><td>15 pull requests; each commit carries issue key</td></tr>
+      <tr><td>Containerised stack, one command</td><td>7 services; docker compose up -d starts full cluster</td></tr>
+      <tr><td>Automated CI on every branch</td><td>19 builds across 11 branches, all SUCCESS, typically 17–24 s</td></tr>
+      <tr><td>Automated deployment with rollback</td><td>9 releases (1.0.1–1.0.9) deployed and smoke-tested automatically</td></tr>
+      <tr><td>Monitoring over time and of state</td><td>Prometheus (4 alerts) + Grafana (12 panels) + Nagios (7 services)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>7.2 The Feedback Loop in Practice</h2>
+  <p>The clearest demonstration of DevOps practices working together occurred after release 1.0.8. <code>docker compose ps</code> reported the frontend container as unhealthy although requests succeeded. Inspection revealed that inside the Alpine image localhost resolved first to IPv6 ::1, while Nginx listened only on IPv4, causing wget health checks to fail. The defect was raised as bug FMH-15, fixed on branch <code>fix/FMH-15-frontend-healthcheck</code> by targeting 127.0.0.1, verified by Jenkins CI, merged via PR #15, and deployed automatically as release 1.0.9, after which the container reported healthy. The issue was detected, patched, tested, and released in one continuous iteration.</p>
+
+  <h2>7.3 Challenges and Resolutions</h2>
+  <table class="lab-table">
+    <thead>
+      <tr>
+        <th style="width: 45%;">Challenge</th>
+        <th style="width: 55%;">Resolution</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Feature-branch builds overwrote release image tags</td><td>Separated tag schemes: 1.0.n for main, 0.0.n-&lt;branch&gt; for feature branches</td></tr>
+      <tr><td>Jenkins on localhost cannot receive GitHub webhooks</td><td>Configured multibranch polling every minute; posted results back as commit statuses</td></tr>
+      <tr><td>Port 5000 reserved by macOS AirPlay; 3306 in use</td><td>API published on 5001, MySQL on 3307, Nagios on 8080</td></tr>
+      <tr><td>Nagios image amd64 running on Apple Silicon</td><td>Platform pinned to linux/amd64 in Compose; widened HTTP check timeouts</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CHAPTER 8 -->
+  <div class="page-break"></div>
+  <h1>8. Conclusion and Future Scope</h1>
+  <h2>8.1 Conclusion</h2>
+  <p>FixMyHostel successfully resolves hostel maintenance bottlenecks: students submit geo-tagged complaints with photo evidence, receive atomic daily tokens, and track repairs live, while maintenance staff work a priority queue and the warden monitors turnaround SLAs. More fundamentally, the project demonstrates how the first seven experiments of the ASD&amp;D syllabus operate as one unified, resilient system.</p>
+  <p>Planning the work as a Scrum backlog produced issue keys that linked requirements to code and releases. Docker Compose transformed the multi-tier application into a reproducible artifact. The Jenkins multibranch pipeline ensured continuous verification, while automated deployment and rollback eliminated manual release errors. Finally, Prometheus, Grafana, and Nagios closed the loop by providing live operational observability.</p>
+
+  <h2>8.2 Future Scope</h2>
+  <p>• Push notifications via WebSockets or Web Push API, replacing polling on the student tracking page.</p>
+  <p>• Turnaround time prediction based on historical category resolution averages.</p>
+  <p>• Deployment to a Kubernetes cluster with Helm charts and rolling updates.</p>
+  <p>• Automated Alertmanager dispatching critical server alerts to Telegram or Slack channels.</p>
+
+  <!-- REFERENCES & APPENDIX -->
+  <div class="page-break"></div>
+  <h1>References</h1>
+  <p>[1] ASD&amp;D Lab Manual, Course Code: 2165119, Department of Artificial Intelligence &amp; Data Science, Thadomal Shahani Engineering College, 2026–2027.</p>
+  <p>[2] K. Beck et al., "Manifesto for Agile Software Development," 2001.</p>
+  <p>[3] J. Humble and D. Farley, Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation. Addison-Wesley, 2010.</p>
+  <p>[4] Docker Inc., "Docker Documentation &amp; Multi-stage Builds," https://docs.docker.com, 2024.</p>
+  <p>[5] Prometheus Authors, "Prometheus Monitoring System &amp; PromQL Documentation," https://prometheus.io/docs, 2024.</p>
+
+  <h1 style="margin-top: 24px;">Appendix: Running the Project</h1>
+  <p>To run the complete 7-service FixMyHostel stack locally:</p>
+  <pre class="terminal"># 1. Start all 7 services with Docker Compose
+docker compose up -d --build
+
+# 2. Verify all containers are healthy
+docker compose ps
+
+# 3. Run automated backend test suites (40 tests)
+cd api && npm test
+
+# 4. Run frontend test suites (6 tests)
+cd ../frontend && npm test
+
+# 5. Execute automated smoke verification
+bash api/scripts/smoke-test.sh
+
+# 6. Run morning rush load simulation (245 tickets)
+node api/scripts/load-test.mjs</pre>
+</div>
+
+</body>
+</html>
+"""
+
+with open(HTML_PATH, 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("Lab manual exact HTML generated successfully at:", HTML_PATH)
+
