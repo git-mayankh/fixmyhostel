@@ -318,8 +318,7 @@
       <tr><td>6</td><td>Testing</td><td style="text-align: center;">23</td></tr>
       <tr><td>7</td><td>Results and Discussion</td><td style="text-align: center;">25</td></tr>
       <tr><td>8</td><td>Conclusion and Future Scope</td><td style="text-align: center;">27</td></tr>
-      <tr><td></td><td>References</td><td style="text-align: center;">28</td></tr>
-      <tr><td>A</td><td>Appendix: Running the Project</td><td style="text-align: center;">29</td></tr>
+      <tr><td>A</td><td>Appendix: Running the Project</td><td style="text-align: center;">28</td></tr>
     </tbody>
   </table>
 
@@ -457,18 +456,24 @@
   <table class="lab-table">
     <thead>
       <tr>
-        <th style="width: 30%;">Member</th>
-        <th style="width: 30%;">Stories</th>
-        <th style="width: 10%;">Points</th>
-        <th style="width: 30%;">Tasks / Bugs</th>
+        <th style="width: 22%;">Member</th>
+        <th style="width: 14%;">Roll No</th>
+        <th style="width: 32%;">Delivered Stories &amp; Features</th>
+        <th style="width: 8%;">Pts</th>
+        <th style="width: 24%;">Infrastructure &amp; Testing</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td><strong>Mayank Heda (Lead)</strong></td><td>FMH-1, FMH-10</td><td>10</td><td>FMH-5, FMH-7, FMH-12, Bug FMH-15</td></tr>
-      <tr><td>Ishita Gurbaxani</td><td>FMH-2, FMH-4, FMH-8, FMH-9, FMH-11</td><td>19</td><td>Frontend tests &amp; validation</td></tr>
-      <tr><td>Bhavisha Kewalramani</td><td>Schema &amp; Cache Integration</td><td>—</td><td>FMH-3, FMH-6, FMH-13, FMH-14</td></tr>
+      <tr><td>Mayank Heda</td><td>2410135</td><td>FMH-1, FMH-7, FMH-17, FMH-21, FMH-22</td><td>19</td><td>FMH-3 (Git repo), FMH-5 (Compose), FMH-6 (Jenkinsfile), viva guide</td></tr>
+      <tr><td>Ishita Gurbaxani</td><td>2401034</td><td>FMH-9, FMH-11, FMH-12, FMH-20, FMH-24</td><td>19</td><td>FMH-13 (Vitest), FMH-14 (Chart.js dashboard), mobile UI polish</td></tr>
+      <tr><td>Bhavisha Kewalramani</td><td>2401044</td><td>FMH-2, FMH-4, FMH-8, FMH-18, FMH-19</td><td>18</td><td>FMH-10 (40 Jest tests), FMH-15 (Prometheus), FMH-16 (Grafana/Nagios), FMH-23</td></tr>
     </tbody>
   </table>
+
+  <div class="figure-box">
+    <img src="./screenshots/14_jira_board.png" alt="Figure 2.1: Live Jira Scrum board with Sprint 3 active" />
+    <div class="figure-caption">Figure 2.1: Live Jira Scrum board with Sprint 3 active, story points, and task distribution across Mayank Heda, Ishita Gurbaxani, and Bhavisha Kewalramani</div>
+  </div>
 
   <!-- CHAPTER 3 -->
   <div class="page-break"></div>
@@ -686,6 +691,11 @@ CMD ["node", "server.js"]</pre>
     </tbody>
   </table>
 
+  <div class="figure-box">
+    <img src="./screenshots/13_jenkins_pipeline.png" alt="Figure 5.7: Jenkins multibranch automated CI/CD pipeline stage view" />
+    <div class="figure-caption">Figure 5.7: Jenkins multibranch automated CI/CD pipeline stage view (Build #2 SUCCESS across all 6 stages)</div>
+  </div>
+
   <h2>5.5 Automated Deployment &amp; Rollback (Experiment 5)</h2>
   <table class="lab-table">
     <thead>
@@ -817,16 +827,9 @@ CMD ["node", "server.js"]</pre>
   <p>• Deployment to a Kubernetes cluster with Helm charts and rolling updates.</p>
   <p>• Automated Alertmanager dispatching critical server alerts to Telegram or Slack channels.</p>
 
-  <!-- REFERENCES & APPENDIX -->
+  <!-- APPENDIX -->
   <div class="page-break"></div>
-  <h1>References</h1>
-  <p>[1] ASD&amp;D Lab Manual, Course Code: 2165119, Department of Artificial Intelligence &amp; Data Science, Thadomal Shahani Engineering College, 2026–2027.</p>
-  <p>[2] K. Beck et al., "Manifesto for Agile Software Development," 2001.</p>
-  <p>[3] J. Humble and D. Farley, Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation. Addison-Wesley, 2010.</p>
-  <p>[4] Docker Inc., "Docker Documentation &amp; Multi-stage Builds," https://docs.docker.com, 2024.</p>
-  <p>[5] Prometheus Authors, "Prometheus Monitoring System &amp; PromQL Documentation," https://prometheus.io/docs, 2024.</p>
-
-  <h1 style="margin-top: 24px;">Appendix: Running the Project</h1>
+  <h1>Appendix: Running the Project</h1>
   <p>To run the complete 7-service FixMyHostel stack locally:</p>
   <pre class="terminal"># 1. Start all 7 services with Docker Compose
 docker compose up -d --build

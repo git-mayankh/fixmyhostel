@@ -487,14 +487,15 @@ def build_lab_manual_document():
     add_lab_table(doc, sp_headers, sp_data, col_widths=[Inches(1.2), Inches(2.4), Inches(1.8), Inches(1.1)])
 
     add_heading_2(doc, "2.7 Distribution of Work Across the Team")
-    dist_headers = ["Member", "Stories", "Points", "Tasks / Bugs"]
-    # Removed bold and removed (Lead) as requested
+    dist_headers = ["Member", "Roll No", "Delivered Stories & Features", "Points", "Infrastructure & Testing Ownership"]
     dist_data = [
-        ("Mayank Heda", "FMH-1, FMH-10", "10", "FMH-5, FMH-7, FMH-12, Bug FMH-15"),
-        ("Ishita Gurbaxani", "FMH-2, FMH-4, FMH-8, FMH-9, FMH-11", "19", "Frontend tests & validation"),
-        ("Bhavisha Kewalramani", "Schema & Cache Integration", "—", "FMH-3, FMH-6, FMH-13, FMH-14")
+        ("Mayank Heda", "2410135", "FMH-1, FMH-7, FMH-17, FMH-21, FMH-22", "19", "FMH-3 (Git repo), FMH-5 (Docker Compose), FMH-6 (Jenkinsfile), viva guide"),
+        ("Ishita Gurbaxani", "2401034", "FMH-9, FMH-11, FMH-12, FMH-20, FMH-24", "19", "FMH-13 (Vitest tests), FMH-14 (Chart.js dashboard), mobile UI polish"),
+        ("Bhavisha Kewalramani", "2401044", "FMH-2, FMH-4, FMH-8, FMH-18, FMH-19", "18", "FMH-10 (40 Jest tests), FMH-15 (Prometheus), FMH-16 (Grafana/Nagios), FMH-23")
     ]
-    add_lab_table(doc, dist_headers, dist_data, col_widths=[Inches(1.8), Inches(2.2), Inches(0.7), Inches(1.8)])
+    add_lab_table(doc, dist_headers, dist_data, col_widths=[Inches(1.5), Inches(0.9), Inches(2.3), Inches(0.6), Inches(2.2)])
+
+    add_figure(doc, os.path.join(SCREENSHOTS_DIR, "14_jira_board.png"), "Figure 2.1: Live Jira Scrum board with Sprint 3 active, story points, and task distribution across Mayank Heda, Ishita Gurbaxani, and Bhavisha Kewalramani", width=Inches(6.0))
 
     add_heading_2(doc, "2.8 Definition of Done")
     add_body_p(doc, "An issue is moved to Done only when all of the following hold:")
@@ -715,6 +716,8 @@ def build_lab_manual_document():
         ("Smoke test*", "curl health check verification on port 5001 & 3000", "Prove new release version is operational")
     ]
     add_lab_table(doc, pipe_headers, pipe_data, col_widths=[Inches(1.1), Inches(2.7), Inches(2.7)])
+
+    add_figure(doc, os.path.join(SCREENSHOTS_DIR, "13_jenkins_pipeline.png"), "Figure 5.7: Jenkins multibranch automated CI/CD pipeline stage view (Build #2 SUCCESS across all 6 stages)", width=Inches(6.0))
 
     add_heading_2(doc, "5.5 Automated Deployment & Rollback (Experiment 5)")
     add_body_p(doc, "Merges into main trigger automated zero-downtime recreation of containers followed by bash smoke verification. If smoke testing fails, the post { failure } block immediately rolls back to the last recorded good version.")
